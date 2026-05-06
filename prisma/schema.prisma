@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Decision {
+  id          String           @id @default(cuid())
+  title       String
+  category    String?
+  background  String
+  concern     String?
+  fear        String?
+  emotions    String?          // JSON string, for example ["anxious","curious"]
+  deadline    DateTime?
+  aiAnalysis  String?          // JSON string returned by the AI analysis step
+  finalChoice String?
+  status      DecisionStatus   @default(DRAFT)
+  reviewDate  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  options     DecisionOption[]
+  review      DecisionReview?
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+  @@index([reviewDate])
+}
+
+model DecisionOption {
+  id          String   @id @default(cuid())
+  decisionId  String
+  label       String
+  description String?
+  decision    Decision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+
+  @@index([decisionId])
+}
+
+model DecisionReview {
+  id               String   @id @default(cuid())
+  decisionId       String   @unique
+  actualResult     String
+  regretScore      Int
+  outcome          String?
+  fearHappened     Boolean?
+  wouldChooseAgain Boolean?
+  lesson           String?
+  reviewedAt       DateTime @default(now())
+  decision         Decision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+}
+
+model UserProfile {
+  id                 String   @id @default(cuid())
+  summary            String?
+  commonCategories   String?  // JSON string
+  commonConcerns     String?  // JSON string
+  commonEmotions     String?  // JSON string
+  commonBiases       String?  // JSON string
+  lowRegretStrategies String? // JSON string
+  highRegretPatterns String?  // JSON string
+  lowRegretPatterns  String?  // JSON string
+  updatedAt          DateTime @updatedAt
+}
+
+enum DecisionStatus {
+  DRAFT
+  ANALYZED
+  DECIDED
+  REVIEWED
+  ARCHIVED
+}
