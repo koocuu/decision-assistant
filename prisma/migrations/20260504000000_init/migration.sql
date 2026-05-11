@@ -1,33 +1,39 @@
+-- CreateEnum
+CREATE TYPE "DecisionStatus" AS ENUM ('DRAFT', 'ANALYZED', 'DECIDED', 'REVIEWED', 'ARCHIVED');
+
 -- CreateTable
 CREATE TABLE "Decision" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "category" TEXT,
     "background" TEXT NOT NULL,
     "concern" TEXT,
     "fear" TEXT,
     "emotions" TEXT,
-    "deadline" DATETIME,
+    "deadline" TIMESTAMP(3),
     "aiAnalysis" TEXT,
     "finalChoice" TEXT,
-    "status" TEXT NOT NULL DEFAULT 'DRAFT',
-    "reviewDate" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "status" "DecisionStatus" NOT NULL DEFAULT 'DRAFT',
+    "reviewDate" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Decision_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "DecisionOption" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "decisionId" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "description" TEXT,
-    CONSTRAINT "DecisionOption_decisionId_fkey" FOREIGN KEY ("decisionId") REFERENCES "Decision" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+
+    CONSTRAINT "DecisionOption_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "DecisionReview" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "decisionId" TEXT NOT NULL,
     "actualResult" TEXT NOT NULL,
     "regretScore" INTEGER NOT NULL,
@@ -35,13 +41,14 @@ CREATE TABLE "DecisionReview" (
     "fearHappened" BOOLEAN,
     "wouldChooseAgain" BOOLEAN,
     "lesson" TEXT,
-    "reviewedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "DecisionReview_decisionId_fkey" FOREIGN KEY ("decisionId") REFERENCES "Decision" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "reviewedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "DecisionReview_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "UserProfile" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "summary" TEXT,
     "commonCategories" TEXT,
     "commonConcerns" TEXT,
@@ -50,7 +57,9 @@ CREATE TABLE "UserProfile" (
     "lowRegretStrategies" TEXT,
     "highRegretPatterns" TEXT,
     "lowRegretPatterns" TEXT,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UserProfile_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -70,3 +79,9 @@ CREATE INDEX "DecisionOption_decisionId_idx" ON "DecisionOption"("decisionId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "DecisionReview_decisionId_key" ON "DecisionReview"("decisionId");
+
+-- AddForeignKey
+ALTER TABLE "DecisionOption" ADD CONSTRAINT "DecisionOption_decisionId_fkey" FOREIGN KEY ("decisionId") REFERENCES "Decision"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DecisionReview" ADD CONSTRAINT "DecisionReview_decisionId_fkey" FOREIGN KEY ("decisionId") REFERENCES "Decision"("id") ON DELETE CASCADE ON UPDATE CASCADE;

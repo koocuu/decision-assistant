@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { db } from "@/lib/db";
 import { decisionStatusLabels } from "@/lib/decision-status";
 
+export const dynamic = "force-dynamic";
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("zh-CN", {
     month: "2-digit",

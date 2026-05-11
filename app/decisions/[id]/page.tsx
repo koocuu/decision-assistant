@@ -10,6 +10,8 @@ import { parseStoredAiAnalysis } from "@/lib/ai-analysis";
 import { db } from "@/lib/db";
 import { decisionStatusLabels } from "@/lib/decision-status";
 
+export const dynamic = "force-dynamic";
+
 function formatDate(date: Date | null) {
   if (!date) {
     return "未设置";

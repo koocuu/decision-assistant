@@ -2,6 +2,8 @@ import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 function parseStringArray(value: string | null) {
   if (!value) {
     return [];

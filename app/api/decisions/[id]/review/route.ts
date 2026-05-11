@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 
 type ReviewPayload = {
@@ -65,7 +66,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "该决策已经复盘过。" }, { status: 409 });
     }
 
-    const review = await db.$transaction(async (tx) => {
+    const review = await db.$transaction(async (tx: Prisma.TransactionClient) => {
       const createdReview = await tx.decisionReview.create({
         data: {
           decisionId: id,

@@ -7,6 +7,8 @@ import { decisionCategories } from "@/lib/decision-constants";
 import { decisionStatuses, decisionStatusLabels } from "@/lib/decision-status";
 import type { DecisionStatus } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 type DecisionsPageProps = {
   searchParams?: Promise<{
     category?: string;
