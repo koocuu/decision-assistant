@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 function unauthorized() {
-  return new NextResponse("Authentication required.", {
+  return NextResponse.json({ error: "AI 功能需要访问密码。" }, {
     status: 401,
     headers: {
       "WWW-Authenticate": 'Basic realm="Decision Assistant", charset="UTF-8"'
@@ -53,5 +53,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
+  matcher: ["/api/ai/:path*"]
 };
