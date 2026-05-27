@@ -15,7 +15,9 @@ function parseBasicAuth(header: string | null) {
   }
 
   try {
-    const decoded = atob(header.slice("Basic ".length));
+    const binary = atob(header.slice("Basic ".length));
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    const decoded = new TextDecoder().decode(bytes);
     const separatorIndex = decoded.indexOf(":");
 
     if (separatorIndex < 0) {
