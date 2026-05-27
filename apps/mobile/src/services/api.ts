@@ -22,7 +22,7 @@ function utf8Bytes(input: string) {
 }
 
 function base64(input: string) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   let output = "";
   let index = 0;
   const bytes = utf8Bytes(input);
@@ -32,10 +32,15 @@ function base64(input: string) {
     const chr2 = bytes[index++];
     const chr3 = bytes[index++];
     const enc1 = chr1 >> 2;
-    const enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-    const enc3 = Number.isNaN(chr2) ? 64 : ((chr2 & 15) << 2) | (chr3 >> 6);
-    const enc4 = Number.isNaN(chr3) ? 64 : chr3 & 63;
-    output += chars.charAt(enc1) + chars.charAt(enc2) + chars.charAt(enc3) + chars.charAt(enc4);
+    const enc2 = ((chr1 & 3) << 4) | ((chr2 ?? 0) >> 4);
+    const enc3 = chr2 === undefined ? 64 : ((chr2 & 15) << 2) | ((chr3 ?? 0) >> 6);
+    const enc4 = chr3 === undefined ? 64 : chr3 & 63;
+
+    output +=
+      chars.charAt(enc1) +
+      chars.charAt(enc2) +
+      (enc3 === 64 ? "=" : chars.charAt(enc3)) +
+      (enc4 === 64 ? "=" : chars.charAt(enc4));
   }
 
   return output;
@@ -52,6 +57,10 @@ async function headers(isAi = false) {
   };
 
   const auth = isAi ? await loadAiAuth() : null;
+  if (isAi && !auth) {
+    throw new Error("请先在设置页保存 AI 访问用户名和密码。");
+  }
+
   if (auth) {
     nextHeaders.Authorization = `Basic ${base64(`${auth.username}:${auth.password}`)}`;
   }
