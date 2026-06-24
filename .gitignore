@@ -31,3 +31,11 @@ prisma/dev.db-journal
 # local caches
 .npm-cache
 tsconfig.tsbuildinfo
+
+# expo dev artifacts
+apps/mobile/expo-*.log
+apps/mobile/expo-*.err.log
+apps/mobile/expo-qr.png
+
+# local design previews (throwaway)
+web-reskin-preview.html

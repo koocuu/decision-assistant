@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
+import { Sheep } from "@/components/sheep";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 import { decisionCategories } from "@/lib/decision-constants";
@@ -192,9 +193,15 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
         </div>
       ) : (
         <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              {selectedCategory || selectedStatus ? "当前筛选条件下没有决策。" : "还没有保存的决策。"}
+          <CardContent className="flex flex-col items-center p-8 text-center">
+            <div
+              className="flex items-center justify-center rounded-3xl"
+              style={{ width: 76, height: 76, background: "var(--warm-soft)" }}
+            >
+              <Sheep size={60} />
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {selectedCategory || selectedStatus ? "当前筛选条件下没有决策。" : "还没有保存的决策，写下第一个纠结吧。"}
             </p>
             <Link
               className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"

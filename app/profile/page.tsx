@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/page-header";
+import { Sheep } from "@/components/sheep";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 
@@ -81,9 +82,15 @@ export default async function ProfilePage() {
         <PageHeader title="用户画像" description="基于决策复盘逐步更新，不做一次性结论。" />
 
         <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              完成几次决策复盘后，我会逐渐总结你的决策模式。
+          <CardContent className="flex flex-col items-center p-8 text-center">
+            <div
+              className="flex items-center justify-center rounded-3xl"
+              style={{ width: 76, height: 76, background: "var(--warm-soft)" }}
+            >
+              <Sheep size={60} />
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              完成几次决策复盘后，小羊会逐渐总结你的决策模式。
             </p>
           </CardContent>
         </Card>

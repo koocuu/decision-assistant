@@ -1,26 +1,37 @@
 @import "tailwindcss";
 
+/*
+ * Shared design language with the mobile app (apps/mobile/src/theme/tokens.ts).
+ * Cool gray surfaces + a single blue accent — "金融级" restraint.
+ */
 :root {
-  --background: #fbfaf8;
-  --foreground: #202124;
+  --background: #f6f5f2;
+  --foreground: #0b0e14;
   --card: #ffffff;
-  --card-foreground: #202124;
+  --card-foreground: #0b0e14;
   --popover: #ffffff;
-  --popover-foreground: #202124;
-  --primary: #245e57;
-  --primary-foreground: #f8faf9;
-  --secondary: #eef1ed;
-  --secondary-foreground: #26312d;
-  --muted: #f0efeb;
-  --muted-foreground: #626862;
-  --accent: #e9f2f0;
-  --accent-foreground: #1d4d48;
-  --destructive: #b42318;
-  --destructive-foreground: #fff7f6;
-  --border: #dedbd2;
-  --input: #dedbd2;
-  --ring: #2f7a71;
-  --radius: 0.5rem;
+  --popover-foreground: #0b0e14;
+  --primary: #1456d8;
+  --primary-foreground: #ffffff;
+  --primary-ink: #0b3a99;
+  --primary-soft: #eef3fe;
+  --warm-soft: #fdf2e4;
+  --secondary: #f2f4f7;
+  --secondary-foreground: #5a6271;
+  --muted: #f2f4f7;
+  --muted-foreground: #5a6271;
+  --accent: #eef3fe;
+  --accent-foreground: #0b3a99;
+  --destructive: #e0394f;
+  --destructive-foreground: #ffffff;
+  --success: #0a8b5a;
+  --success-soft: #e8f4ee;
+  --warning: #b7791f;
+  --border: #e6e9ef;
+  --border-strong: #e2e5eb;
+  --input: #e2e5eb;
+  --ring: #1456d8;
+  --radius: 0.75rem;
 }
 
 @theme inline {
@@ -32,6 +43,9 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-warm-soft: var(--warm-soft);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -40,28 +54,70 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
 }
 
 * {
   border-color: var(--border);
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   min-height: 100vh;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 button,
 input,
 textarea {
   font: inherit;
+}
+
+/* Numbers should align like a financial readout. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* 小羊呼吸式浮动（与移动端一致的陪伴感） */
+@keyframes sheep-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+.sheep-float {
+  animation: sheep-float 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheep-float {
+    animation: none;
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
 }

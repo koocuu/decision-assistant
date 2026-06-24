@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, ClipboardList, Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Sheep } from "@/components/sheep";
 import { db } from "@/lib/db";
 import { decisionStatusLabels } from "@/lib/decision-status";
 
@@ -81,32 +82,45 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-lg border bg-card p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium text-primary">V0.1 本地决策记录与复盘</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-normal">低后悔决策助手</h1>
-            <p className="mt-4 text-muted-foreground">
-              不是替你做选择，而是帮你少内耗、少后悔、越来越懂自己的决策模式。
+      <section className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-8">
+        <span className="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
+        <div className="flex items-center justify-between gap-6">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              低后悔决策 · 个人决策控制台
             </p>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+              今天有什么纠结，说给我听？
+            </h1>
+            <p className="mt-4 max-w-xl text-muted-foreground">
+              不是替你做选择，而是帮你少内耗、少后悔，越来越懂自己的决策模式。
+            </p>
+            <Link
+              href="/decisions/new"
+              className="mt-6 inline-flex h-11 w-fit items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98]"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              整理一次纠结
+            </Link>
           </div>
-          <Link
-            href="/decisions/new"
-            className="inline-flex h-10 w-fit items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+          <div
+            className="hidden shrink-0 items-center justify-center rounded-3xl sm:flex"
+            style={{ width: 108, height: 108, background: "var(--warm-soft)" }}
           >
-            <Plus className="h-4 w-4" aria-hidden="true" />
-            整理一次纠结
-          </Link>
+            <Sheep size={84} float />
+          </div>
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.label}>
-            <CardHeader className="p-5">
-              <CardDescription>{stat.label}</CardDescription>
-              <CardTitle className="text-3xl">{stat.value}</CardTitle>
-            </CardHeader>
+            <div className="flex flex-col gap-2 p-5">
+              <span className="text-xs font-medium tracking-wide text-muted-foreground">
+                {stat.label}
+              </span>
+              <span className="tabular text-3xl font-semibold tracking-tight">{stat.value}</span>
+            </div>
           </Card>
         ))}
       </section>
@@ -157,9 +171,15 @@ export default async function HomePage() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-md border border-dashed p-8 text-center">
-                <ClipboardList className="mx-auto h-8 w-8 text-muted-foreground" aria-hidden="true" />
-                <p className="mt-3 text-sm text-muted-foreground">还没有记录决策。</p>
+              <div className="flex flex-col items-center rounded-xl border border-dashed p-8 text-center">
+                <div
+                  className="flex items-center justify-center rounded-3xl"
+                  style={{ width: 76, height: 76, background: "var(--warm-soft)" }}
+                >
+                  <Sheep size={60} />
+                </div>
+                <p className="mt-3 text-sm font-medium">还没有决策记录</p>
+                <p className="mt-1 text-sm text-muted-foreground">写下第一个纠结，小羊帮你理</p>
               </div>
             )}
           </CardContent>
