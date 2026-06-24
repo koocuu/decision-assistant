@@ -1,78 +1,66 @@
 # 决策助手 Roadmap
 
-本文件只记录产品功能之外的工程、分发、可信度和运维问题。当前战略：**Web/PWA 优先，Expo App 封存**。
+本文件只记录产品功能之外的工程、分发、可信度和运维问题。当前战略：**Next Web + Expo App + shared core**。
 
 ## 当前事实
 
-- Web 已是 Next.js + Prisma + Neon Postgres。
-- PWA 基础已上线到 `main`：manifest、service worker、离线页、移动端底部 tab、安装提示。
-- Expo App 代码保留在仓库中，但当前不主动维护。
-- P0 账号体系已进入实现：`User`、`UserSession`、`RateLimit`、`userId/anonId` 归属字段已加入 schema 和 migration。
-- Web/PWA 已改为匿名优先：匿名 cookie 自动生成；登录/注册后认领匿名数据。
-- AI 接口改为服务端 DeepSeek key + 身份/IP/全站日额度。
-- `Decision / DecisionReview / UserProfile` 的 Web 页面与 API 查询按当前身份隔离。
+- Web 已是 Next.js + Prisma + Neon Postgres，并部署在 Vercel。
+- Expo App 重新启用，目标是 Android/iOS 原生体验。
+- PWA 安装路线已放弃；manifest、service worker、离线页和安装提示已移除。
+- Web 首页新增 Android App 下载入口，按钮和二维码都走 `/api/download/android`。
+- P0 账号体系已实现：`User`、`UserSession`、`RateLimit`、`userId/anonId` 数据隔离。
+- AI 接口走服务端 DeepSeek key + 身份/IP/全站日额度。
+- 生产迁移 `20260624000000_add_accounts` 已部署到 Neon。
 
 ## P0 · 账号与数据隔离
 
-这是一组必须一起解的地基问题：
+| # | 问题 | 状态 |
+|---|---|---|
+| 1 | 没有账号/身份体系 | 已实现邮箱密码登录/注册 |
+| 2 | 数据全局共享 | 已按 `userId` 或 `anonId` 隔离 |
+| 3 | API 公开读写 | 决策 API 和页面已接身份过滤 |
+| 4 | AI 只靠共享密码 | 已改为服务端代理 + 身份限额 |
+| 5 | 无速率/额度限制 | 已加匿名/登录/IP/全局日限额 |
 
-| # | 问题 | 当前风险 | 目标 |
-|---|---|---|---|
-| 1 | 没有账号/身份体系 | 不能多人可信使用 | 已实现邮箱密码登录/注册，匿名也能完整生成报告 |
-| 2 | 数据全局共享 | 隐私泄露，任何人可看全库 | 已按 `userId` 或 `anonId` 隔离 |
-| 3 | API 公开读写 | `/api/decisions` 无身份过滤 | 已在决策 API 和页面查询接入身份过滤 |
-| 4 | AI 只靠共享密码 | 体验差，也不能承载公开分发 | 已改为服务端代理 + 身份限额 |
-| 5 | 无速率/额度限制 | DeepSeek 成本可被刷爆 | 已加匿名/登录/IP/全局日限额 |
+## P0.5 · Expo App 重新启用
 
-### P0 拍板方案
+| # | 任务 | 目标 |
+|---|---|---|
+| 1 | App auth 适配 | 服务端登录/注册返回 token；App 用 SecureStore 存 token，请求带 Bearer |
+| 2 | 匿名 ID | App 生成并保存 `anonId`，所有请求带 `x-anon-id` |
+| 3 | App API client | App 调现有 `/api/account/*`、`/api/decisions`、`/api/ai/*` |
+| 4 | 历史同步 | 登录读服务端，匿名也尽量读服务端 anon 数据；本地只做缓存/草稿 |
+| 5 | APK 出包 | 配置 EAS 或本地 Android build，产物链接写入 `ANDROID_APK_URL` |
+| 6 | Web 下载入口 | 首页按钮和二维码指向 `/api/download/android` |
 
-- 登录方式：邮箱 + 密码。
-- 匿名策略：Web 生成 `anonId`，存 cookie；未登录也可生成报告。
-- 数据认领：登录/注册后调用 claim，把当前 `anonId` 数据挂到用户。
-- DB：继续用现有 Neon Postgres，不新开账号库。
-- 迁移：migration 文件已生成并已部署到生产 Neon。
-- App：继续封存，仅清理旧共享鉴权逻辑，不投入生产化。
+## P1 · Shared Core
 
-### P0 实施顺序
+| # | 问题 | 目标 |
+|---|---|---|
+| 1 | Web/App 类型重复 | 新建 `packages/core` 共享类型 |
+| 2 | API 调用重复 | 共享 API client 和错误处理 |
+| 3 | 决策报告结构漂移 | 共享 report parsing/normalization |
+| 4 | 设计漂移 | 共享 colors/radii/spacing/typography tokens |
+| 5 | 文案漂移 | 共享小羊暖语和报告分析语规范 |
 
-1. DB schema + migration 文件：
-   - 新增 `User`
-   - `Decision / DecisionReview / UserProfile` 加 `userId?`、`anonId?`
-   - 可选新增 `RateLimit`
-2. 服务端身份核心：
-   - `lib/auth.ts`
-   - `lib/anon.ts`
-   - `lib/identity.ts`
-   - session cookie
-3. Account API：
-   - `POST /api/account/register`
-   - `POST /api/account/login`
-   - `POST /api/account/logout`
-   - `GET /api/account/session`
-   - `POST /api/account/claim`
-4. 决策 API 和页面加身份过滤。
-5. AI 接口改为身份限流。
-6. Web 登录/注册 UI 和顶栏状态。
-7. 验证后执行生产迁移并部署。
-
-## P1 · Web/PWA 生产化
+## P1 · Web 生产化
 
 | # | 问题 | 目标 |
 |---|---|---|
 | 1 | 缺真实使用数据 | 接 Vercel Analytics 或 Plausible |
 | 2 | SEO/分享不完整 | favicon、OG 图、分享标题描述 |
-| 3 | 缺隐私政策/服务条款 | 补页面，方便公开分发 |
+| 3 | 缺隐私政策/服务条款 | 补页面，方便公开分发和上架 |
 | 4 | 缺错误监控 | 接 Sentry 或等价方案 |
-| 5 | PWA 未做 Lighthouse/真机审计 | 真机添加到主屏 + Lighthouse PWA 分数检查 |
 
-## P1 · 架构与一致性
+## P1 · App 生产化
 
 | # | 问题 | 目标 |
 |---|---|---|
-| 1 | API 契约无运行时校验 | 用 zod 或等价方案校验请求/响应 |
-| 2 | Web 流程缺“拆解中”状态 | 补小羊 thinking 过渡状态 |
-| 3 | 文案语气未统一 | 写一份小羊暖语/报告分析语指南 |
-| 4 | Expo 与 Web 有重复类型 | Expo 封存期间暂不抽包，等解封再考虑 `packages/core` |
+| 1 | 缺 EAS 配置 | 补 `eas.json` 和 Android/iOS build profile |
+| 2 | App 图标/启动图 | 规范化小羊图标和 splash |
+| 3 | scheme/deep link | 配置 App scheme |
+| 4 | 崩溃监控 | 接 Sentry |
+| 5 | 上架材料 | 隐私政策、服务条款、截图、描述 |
 
 ## P2 · 质量与运维
 
@@ -83,16 +71,3 @@
 | 3 | DB 备份策略未确认 | 确认 Neon 备份/恢复路径 |
 | 4 | 可访问性未审计 | 对比度、焦点态、屏读标签 |
 | 5 | 暗色模式未实现 | 低优先级 |
-| 6 | i18n 未规划 | 当前默认中文，暂不投入 |
-
-## Deferred · Expo App
-
-Expo App 当前封存。只有出现明确上架或原生能力需求时再解封。
-
-解封时再处理：
-
-- EAS Build
-- app scheme/deep link
-- App 图标与 splash
-- 崩溃监控
-- App Store/TestFlight 流程

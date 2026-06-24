@@ -14,58 +14,39 @@
 
 - 当前项目允许小步直接在 `main` 上开发并推送，让 Vercel 直接部署。
 - 涉及数据库迁移、账号体系、鉴权、删除数据、支付等高风险改动时，优先开分支或至少先提交可回滚的小步。
-- 原生 Expo App 已决定暂时封存；除非任务明确要求，不主动改 `apps/mobile/**`。本轮 P0 仅允许清理旧共享鉴权残留。
+- Next Web 和 API 在根目录 `app/`、`components/`、`lib/`、`prisma/`。
+- Expo App 在 `apps/mobile/**`，已重新启用。
+- 共享业务逻辑下一步放到 `packages/core/**`。
 - Prisma migration 不自动跑生产库。迁移执行必须由用户明确确认。
 
 ## 环境变量
 
-本地真实环境变量放在仓库根目录 `.env`：
-
-```text
-C:\Users\zhangtong03\Documents\Codex\2026-05-11\https-github-com-koocuu-decision-assistant\.env
-```
-
-不要放到 `apps/mobile/.env`。不要提交 `.env`。
-
-当前 `.gitignore` 已忽略：
-
-```gitignore
-.env
-.env*.local
-```
-
-本地 `.env` 可从 `.env.example` 复制后填写：
+本地真实环境变量放在仓库根目录 `.env`，不要提交。
 
 ```env
 DATABASE_URL="postgresql://...neon.../...?sslmode=require"
 DEEPSEEK_API_KEY="..."
 DEEPSEEK_BASE_URL="https://api.deepseek.com"
 DEEPSEEK_MODEL="deepseek-chat"
+ANDROID_APK_URL="https://.../decision-assistant.apk"
 ```
 
-Neon 迁移用连接串使用 direct/unpooled 版本，放在根目录 `.env` 的 `DATABASE_URL`。
+生产环境变量在 Vercel Dashboard 设置。
 
 ## 密钥规则
 
 - DeepSeek key 只在服务端环境变量中出现：`DEEPSEEK_API_KEY`。
-- 前端、PWA、移动端都不能保存 DeepSeek key。
-- 生产环境变量在 Vercel Dashboard 设置。
-- 本地开发环境变量在根目录 `.env` 设置。
+- Web 前端和 Expo App 都不能保存 DeepSeek key。
+- Expo App 不能直连 Neon，必须走 Vercel `/api/*`。
+- App 登录 token 存 `SecureStore`，不要存普通 AsyncStorage。
 
-## PWA 约定
+## Web + App 约定
 
-- PWA 基于当前 Next.js Web 端增强，不引入新前端框架。
-- 优先保证移动端 Web 可用性，再补增强能力。
-- 不为了 PWA 牺牲 Web 的 SEO 与分享能力。
-- 不主动维护 Expo App，除非用户明确要求解封。
-
-## P0 账号体系约定
-
-- P0 主线是 Web/PWA 账号体系；Expo App 只做封存状态下的旧鉴权逻辑清理。
-- 登录方式默认邮箱 + 密码。
-- 匿名用户必须能完整生成报告。
-- 数据隔离按 `userId` 或 `anonId` 做，不能继续全局共享。
-- 生产迁移必须由用户确认后再执行。
+- Next 保留 Web、SEO、分享、服务端 API、Prisma、Neon。
+- Expo 负责 Android/iOS 原生体验。
+- 不再投入 PWA 安装能力。
+- UI 不强行共享；设计令牌和业务逻辑优先共享。
+- Web 和 App 的核心流程必须一致：创建决策、AI 分析、选择、复盘、画像更新。
 
 ## 质量检查
 
@@ -77,9 +58,8 @@ npm run build
 npm run prisma:generate
 ```
 
-移动端如被明确要求修改，再在 `apps/mobile` 下运行：
+移动端修改后在 `apps/mobile` 下运行：
 
 ```powershell
 npm run typecheck
 ```
-

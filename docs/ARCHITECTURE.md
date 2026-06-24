@@ -4,30 +4,58 @@
 
 ## 当前结论
 
-- 主产品优先做 **Web + PWA**。
-- 原生 Expo App 暂时封存，保留代码但不主动维护。
-- 数据库使用现有 Neon Postgres，不另起账号库。
-- 账号体系采用匿名优先：不登录也能完整生成报告；登录后认领匿名数据，实现跨端同步。
-- AI 调用由服务端代理 DeepSeek，并按匿名/登录/IP/全站维度限额。
+- 主产品架构调整为 **Next Web + Expo App + shared core**。
+- Next.js 保留为 PC Web、移动 Web、服务端 API、Prisma、Neon、SEO/分享入口。
+- Expo SDK 54 重新启用，负责 Android/iOS 原生 App 体验。
+- 不再投入 PWA 安装能力；已移除 manifest、service worker、离线页和安装提示。
+- 数据库继续使用现有 Neon Postgres，不另起账号库。
+- AI 调用由 Vercel/Next 服务端代理 DeepSeek，前端和 App 都不能保存 DeepSeek key。
 
 ## 技术栈
 
 - Web：Next.js App Router。
+- App：Expo SDK 54。
 - 数据库：Neon Postgres，通过 Prisma 访问。
-- AI：服务端读取 `DEEPSEEK_API_KEY` 调 DeepSeek，前端不保存 AI key。
-- PWA：基于现有 Next.js Web 端增强，不换框架。
-- 原生移动端：Expo SDK 54，当前仅作为封存代码保留。
-- 决策创建后进入 Web 分析中页面，自动调用 AI 并在完成后跳转详情页，复刻原生 App 的流程感。
+- 部署：Vercel 承载 Next Web 和 `/api/*`。
+- AI：服务端读取 `DEEPSEEK_API_KEY` 调 DeepSeek。
+- APK 下载：Web 通过 `/api/download/android` 跳转到 `ANDROID_APK_URL`。
 
-## PWA 策略
+## 分层
 
-PWA 不是新框架，而是给现有 Web 增加可安装能力：
+```text
+apps/web (当前根 Next app)
+  - PC Web / 移动 Web
+  - Vercel API routes
+  - Prisma / Neon / DeepSeek proxy
 
-- `manifest.webmanifest`：应用名、图标、主题色、启动方式。
-- service worker：离线兜底、缓存策略、后续推送能力。
-- 响应式移动 Web：手机首页、决策创建、历史、详情、登录流程可用。
+apps/mobile
+  - Expo Android / iOS App
+  - 调用同一套 /api/*
 
-当前 Web 端可以作为 PWA 基础直接改造。不是“重写一个 App”，而是在现有 Next.js 项目上补移动体验与安装能力。
+packages/core (下一步)
+  - shared types
+  - API client
+  - report parsing/normalization
+  - date/score helpers
+  - prompt result schemas
+
+packages/tokens (下一步可并入 core)
+  - colors
+  - radii
+  - spacing
+  - typography scale
+```
+
+## UI 一致性原则
+
+- 不强行共享 Web 和 App 的 UI 组件。
+- Web 和 App 可以有合理差异：PC 可以有顶部导航，App 可以有底部 Tab。
+- 一致性来自共享设计令牌和业务逻辑，而不是两端长得一模一样。
+- 必须共享或保持一致的内容：
+  - 品牌色、圆角、间距、字号比例
+  - 小羊资产和情绪语气
+  - 决策创建、AI 分析、复盘、画像更新的流程状态
+  - API 请求/错误处理/类型定义
 
 ## 数据与身份
 
@@ -39,18 +67,16 @@ resolveIdentity(req) ->
   | { kind: "anon"; anonId: string }
 ```
 
-- 登录态：从 session 获取 `userId`。
-- 匿名态：Web 从 cookie/localStorage 同步到请求，移动端从 `x-anon-id` 请求头读取。
+- Web 登录态：从 httpOnly session cookie 获取 `userId`。
+- App 登录态：下一步扩展为 Bearer token，App 存 `SecureStore`。
+- 匿名态：Web cookie 或 App `x-anon-id`。
 - `Decision / DecisionReview / UserProfile` 归属 `userId` 或 `anonId`。
-- 登录/注册后调用 `/api/account/claim { anonId }`，把匿名数据挂到当前用户。
+- 登录/注册后 claim，把匿名数据挂到当前用户。
 
 ## 当前战略边界
 
-- P0 不做“全端 RN 一套写”。
-- P0 不新增第二套数据库。
-- P0 不把 DeepSeek key 放到前端或移动端。
-- 原生 App 后续只有在真实用户量或上架需求明确后再解封。
-- 如果未来需要上架 iOS，可选路径：
-  - 解封 Expo App。
-  - 或用 Capacitor 把现有 PWA/Web 壳成原生 App。
-
+- 不做 Expo-only 推倒重来。
+- 不让 Expo App 直连 Neon 或 DeepSeek。
+- 不把 DeepSeek key 放到前端或移动端。
+- Next API 是 Web 和 App 共用后端。
+- 业务逻辑优先抽共享 core；UI 组件共享放到后面评估。

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Layers3, Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppDownloadCard } from "@/components/app-download-card";
 import { Sheep } from "@/components/sheep";
 import { db } from "@/lib/db";
 import { decisionStatusLabels } from "@/lib/decision-status";
@@ -133,6 +134,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <AppDownloadCard />
 
       <section className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4">
         {stats.map((stat) => (

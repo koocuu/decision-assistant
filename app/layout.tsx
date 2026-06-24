@@ -4,27 +4,12 @@ import { AccountStatus } from "@/components/account-status";
 import { MainNav } from "@/components/main-nav";
 import { Sheep } from "@/components/sheep";
 import { MobileTabNav } from "@/components/mobile-tab-nav";
-import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
-import { PwaRegister } from "@/components/pwa-register";
 import "./globals.css";
 
 export const metadata: Metadata = {
   applicationName: "决策助手",
   title: "决策助手 · Decision Assistant",
   description: "不是替你做选择，而是帮你把纠结收敛成一个低后悔行动。",
-  manifest: "/manifest.webmanifest",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "决策助手"
-  },
-  icons: {
-    icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" }
-    ],
-    apple: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }]
-  },
   formatDetection: {
     telephone: false
   }
@@ -69,9 +54,7 @@ export default function RootLayout({
             </div>
           </header>
           <main className="mx-auto max-w-6xl px-4 pb-36 pt-5 sm:px-6 sm:py-8">{children}</main>
-          <PwaInstallPrompt />
           <MobileTabNav items={navItems} />
-          <PwaRegister />
         </div>
       </body>
     </html>
