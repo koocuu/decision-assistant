@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
 import { Home, Layers3, PlusCircle, UserRound } from "lucide-react";
 import { isNavItemActive, type NavItem } from "@/lib/nav-active";
 import { cn } from "@/lib/utils";
@@ -16,33 +15,13 @@ const icons = {
 
 export function MobileTabNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
-  const optimisticTimer = useRef<number | null>(null);
-  const [optimisticPath, setOptimisticPath] = useState<string | null>(null);
-  const activePath = optimisticPath ?? pathname;
-
-  useEffect(() => {
-    return () => {
-      if (optimisticTimer.current) {
-        window.clearTimeout(optimisticTimer.current);
-      }
-    };
-  }, []);
-
-  function markOptimistic(path: string) {
-    if (optimisticTimer.current) {
-      window.clearTimeout(optimisticTimer.current);
-    }
-
-    setOptimisticPath(path);
-    optimisticTimer.current = window.setTimeout(() => setOptimisticPath(null), 900);
-  }
 
   return (
     <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+14px)] z-40 rounded-2xl border bg-card/96 px-2 py-2 shadow-[0_12px_36px_-18px_rgba(11,14,20,0.38)] backdrop-blur md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
         {items.map((item) => {
           const Icon = icons[item.href as keyof typeof icons] ?? Home;
-          const active = isNavItemActive(activePath, item.href);
+          const active = isNavItemActive(pathname, item.href);
 
           return (
             <Link
@@ -52,7 +31,6 @@ export function MobileTabNav({ items }: { items: NavItem[] }) {
                 "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-medium text-muted-foreground transition active:scale-[0.98]",
                 active ? "bg-primary-soft text-primary" : "active:bg-muted"
               )}
-              onClick={() => markOptimistic(item.href)}
             >
               <Icon className="h-5 w-5" aria-hidden="true" />
               <span>{item.href === "/decisions/new" ? "整理" : item.label.replace("历史决策", "记录")}</span>
