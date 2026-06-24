@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,7 @@ function normalizeDraft(value: Partial<DecisionDraft>): DecisionDraft {
 }
 
 export function DecisionIntake() {
+  const router = useRouter();
   const [rawText, setRawText] = useState("");
   const [draft, setDraft] = useState<DecisionDraft | null>(null);
   const [isParsing, setIsParsing] = useState(false);
@@ -89,7 +91,7 @@ export function DecisionIntake() {
 
     try {
       const id = await createDecision(draft);
-      window.location.assign(`/decisions/${id}/analyzing`);
+      router.push(`/decisions/${id}/analyzing`);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "创建决策失败，请稍后再试。");
     } finally {

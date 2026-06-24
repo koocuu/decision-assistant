@@ -21,6 +21,15 @@ function isActive(pathname: string, href: string) {
   if (href === "/") {
     return pathname === "/";
   }
+
+  if (href === "/decisions/new") {
+    return pathname === "/decisions/new";
+  }
+
+  if (href === "/decisions") {
+    return pathname === "/decisions" || /^\/decisions\/[^/]+$/.test(pathname);
+  }
+
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

@@ -28,13 +28,14 @@ export function AccountForm({ mode }: { mode: AccountMode }) {
         },
         body: JSON.stringify({ email, password })
       });
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as { error?: string; user?: { id: string; email: string } | null };
 
       if (!response.ok) {
         throw new Error(data.error || "操作失败，请稍后再试。");
       }
 
-      router.push("/");
+      window.dispatchEvent(new CustomEvent("decision-account-session-change", { detail: { user: data.user ?? null } }));
+      router.replace("/");
       router.refresh();
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "操作失败，请稍后再试。");

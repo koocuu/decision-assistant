@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,6 +73,7 @@ export async function createDecision(draft: DecisionDraft) {
 }
 
 export function DecisionForm({ initialDraft, redirectToAnalyze = false, submitLabel = "保存决策" }: DecisionFormProps) {
+  const router = useRouter();
   const [title, setTitle] = useState(initialDraft?.title ?? "");
   const [category, setCategory] = useState(initialDraft?.category ?? "");
   const [background, setBackground] = useState(initialDraft?.background ?? "");
@@ -155,7 +157,7 @@ export function DecisionForm({ initialDraft, redirectToAnalyze = false, submitLa
 
     try {
       const id = await createDecision(draft);
-      window.location.assign(redirectToAnalyze ? `/decisions/${id}/analyzing` : `/decisions/${id}`);
+      router.push(redirectToAnalyze ? `/decisions/${id}/analyzing` : `/decisions/${id}`);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "创建决策失败，请稍后再试。");
     } finally {

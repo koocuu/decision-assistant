@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 type User = {
@@ -11,16 +11,39 @@ type User = {
 export function AccountStatus() {
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
+  const refreshSession = useCallback(() => {
     fetch("/api/account/session")
       .then((response) => response.json())
       .then((data: { user?: User | null }) => setUser(data.user ?? null))
       .catch(() => setUser(null));
   }, []);
 
+  useEffect(() => {
+    refreshSession();
+
+    function handleSessionChange(event: Event) {
+      const nextUser = (event as CustomEvent<{ user?: User | null }>).detail?.user;
+      if (nextUser !== undefined) {
+        setUser(nextUser);
+        return;
+      }
+
+      refreshSession();
+    }
+
+    window.addEventListener("decision-account-session-change", handleSessionChange);
+    window.addEventListener("focus", refreshSession);
+
+    return () => {
+      window.removeEventListener("decision-account-session-change", handleSessionChange);
+      window.removeEventListener("focus", refreshSession);
+    };
+  }, [refreshSession]);
+
   async function logout() {
     await fetch("/api/account/logout", { method: "POST" });
     setUser(null);
+    window.dispatchEvent(new CustomEvent("decision-account-session-change", { detail: { user: null } }));
     window.location.assign("/");
   }
 
