@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { AccountStatus } from "@/components/account-status";
+import { MainNav } from "@/components/main-nav";
 import { Sheep } from "@/components/sheep";
 import { MobileTabNav } from "@/components/mobile-tab-nav";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
@@ -63,21 +64,11 @@ export default function RootLayout({
                 </span>
                 <span className="text-base font-semibold tracking-tight">决策助手</span>
               </Link>
-              <nav className="hidden items-center gap-0.5 overflow-x-auto md:flex">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="whitespace-nowrap rounded-md px-2.5 py-2 text-sm text-muted-foreground transition hover:bg-accent hover:text-accent-foreground sm:px-3"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
+              <MainNav items={navItems} />
               <AccountStatus />
             </div>
           </header>
-          <main className="mx-auto max-w-6xl px-4 pb-28 pt-5 sm:px-6 sm:py-8">{children}</main>
+          <main className="mx-auto max-w-6xl px-4 pb-36 pt-5 sm:px-6 sm:py-8">{children}</main>
           <PwaInstallPrompt />
           <MobileTabNav items={navItems} />
           <PwaRegister />

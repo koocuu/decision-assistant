@@ -39,6 +39,7 @@
 - 封存的 Expo App 已移除旧的手填 AI 鉴权 UI 和共享鉴权 header。
 - Web 决策创建后会进入 `/decisions/[id]/analyzing`，用小羊分析中页面自动调用 AI，完成后跳转详情页。
 - 生产迁移已执行：`npm run prisma:deploy` 成功应用 `20260624000000_add_accounts` 到 Neon `neondb/public`。
+- PC 顶部导航和移动底部导航已统一选中态规则；移动底部栏改为悬浮胶囊，并增加点击乐观高亮。
 
 ## 进行中 / 未完成
 
