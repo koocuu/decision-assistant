@@ -1,66 +1,53 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { BodyText, Card, PrimaryButton, Screen, Title } from "../src/components/Primitives";
-import { analyzeDecision, createDecision, parseDecision } from "../src/services/api";
-import { consumePendingInput, saveReport } from "../src/storage/history";
-import { colors, radii, spacing } from "../src/theme/tokens";
-import type { DecisionReport } from "../src/types/decision";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { AppText, Button, IconButton, Screen, ScreenHeader } from "../src/components/Primitives";
+import { Sheep } from "../src/components/Sheep";
+import { generateDecisionReport } from "../src/services/generateDecisionReport";
+import { consumePendingInput, setPendingInput, type PendingDecisionInput } from "../src/storage/history";
+import { colors, hairlineWidth, radii, spacing } from "../src/theme/tokens";
 
 const steps = [
-  "正在拆解你的决策变量",
-  "正在评估不同方案的风险收益",
-  "正在生成更低后悔概率的建议"
+  { title: "拆解决策变量", caption: "提取问题中的关键因子与隐含约束" },
+  { title: "评估方案风险收益", caption: "对比每个选项的可逆性、机会成本" },
+  { title: "生成低后悔建议", caption: "给出可执行的下一步与复盘窗口" }
 ];
 
 export default function GenerateScreen() {
   const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState("");
-
-  const currentStep = useMemo(() => steps[Math.min(activeStep, steps.length - 1)], [activeStep]);
+  const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveStep((current) => Math.min(current + 1, steps.length - 1));
-    }, 1350);
-
+    }, 1500);
     return () => clearInterval(timer);
-  }, []);
+  }, [retryToken]);
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
+      let input: PendingDecisionInput | null = null;
       try {
-        const input = await consumePendingInput();
+        setError("");
+        input = await consumePendingInput();
         if (!input) {
           throw new Error("没有找到待分析的决策输入。");
         }
 
-        const draft = await parseDecision(input.rawText);
-        const normalizedDraft = {
-          ...draft,
-          category: input.category || draft.category
-        };
-        const created = await createDecision(normalizedDraft);
-        const analyzed = await analyzeDecision(created.id);
-        const report: DecisionReport = {
-          id: created.id,
-          title: normalizedDraft.title,
-          category: input.category || normalizedDraft.category,
-          rawText: input.rawText,
-          createdAt: new Date().toISOString(),
-          draft: normalizedDraft,
-          analysis: analyzed.aiAnalysis
-        };
-
-        await saveReport(report);
+        const report = await generateDecisionReport(input);
 
         if (!cancelled) {
           router.replace({ pathname: "/result", params: { id: report.id } });
         }
       } catch (caughtError) {
+        if (input) {
+          await setPendingInput(input);
+        }
         if (!cancelled) {
           setError(caughtError instanceof Error ? caughtError.message : "生成决策报告失败。");
         }
@@ -68,37 +55,99 @@ export default function GenerateScreen() {
     }
 
     run();
-
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, [router, retryToken]);
+
+  function retryGenerate() {
+    setActiveStep(0);
+    setError("");
+    setRetryToken((current) => current + 1);
+  }
 
   return (
     <Screen>
+      <ScreenHeader
+        left={<IconButton name="close" variant="ghost" onPress={() => router.replace("/")} />}
+      />
+
       <View style={styles.container}>
-        <Card style={styles.panel}>
-          <View style={styles.indicator}>
-            {error ? <Text style={styles.errorMark}>!</Text> : <ActivityIndicator color={colors.primary} size="small" />}
+        {error ? (
+          <View style={styles.statusIcon}>
+            <Ionicons name="alert-circle-outline" size={28} color={colors.danger} />
           </View>
-          <Title>{error ? "生成遇到问题" : "正在形成决策报告"}</Title>
-          <BodyText muted>
-            {error || "我们会把你的问题拆成变量、方案、风险与执行建议，而不是给出一段松散回答。"}
-          </BodyText>
-          {!error ? (
-            <View style={styles.stepList}>
-              {steps.map((step, index) => (
-                <View key={step} style={styles.stepRow}>
-                  <View style={[styles.dot, index <= activeStep && styles.dotActive]} />
-                  <Text style={[styles.stepText, index === activeStep && styles.stepTextActive]}>{step}</Text>
+        ) : (
+          <View style={styles.sheepStage}>
+            <View style={styles.sheepHaloOuter} />
+            <View style={styles.sheepHaloInner} />
+            <Sheep size={112} mood="thinking" animate />
+          </View>
+        )}
+
+        <AppText variant="headline" align="center">
+          {error ? "生成遇到问题" : "小羊正在帮你拆解…"}
+        </AppText>
+        <AppText
+          variant="meta"
+          color={colors.textSecondary}
+          align="center"
+          style={{ marginTop: spacing.sm, paddingHorizontal: spacing.lg }}
+        >
+          {error || "把你的纠结拆成变量、方案、风险和下一步，而不是一段松散的回答。"}
+        </AppText>
+
+        {error ? (
+          <View style={styles.errorActions}>
+            <Button icon="refresh" onPress={retryGenerate} size="md">
+              重试生成
+            </Button>
+            <Button variant="secondary" onPress={() => router.replace("/")} size="md">
+              返回修改
+            </Button>
+          </View>
+        ) : (
+          <View style={styles.steps}>
+            {steps.map((step, index) => {
+              const status = index < activeStep ? "done" : index === activeStep ? "active" : "pending";
+              return (
+                <View key={step.title} style={styles.stepRow}>
+                  <View
+                    style={[
+                      styles.stepIndex,
+                      status === "active" ? styles.stepIndexActive : null,
+                      status === "done" ? styles.stepIndexDone : null
+                    ]}
+                  >
+                    {status === "done" ? (
+                      <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                    ) : (
+                      <Text
+                        style={[
+                          styles.stepIndexText,
+                          status === "active" ? styles.stepIndexTextActive : null
+                        ]}
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </Text>
+                    )}
+                  </View>
+                  <View style={styles.stepBody}>
+                    <Text
+                      style={[
+                        styles.stepTitle,
+                        status === "pending" ? { color: colors.textTertiary } : null
+                      ]}
+                    >
+                      {step.title}
+                    </Text>
+                    <Text style={styles.stepCaption}>{step.caption}</Text>
+                  </View>
                 </View>
-              ))}
-            </View>
-          ) : (
-            <PrimaryButton onPress={() => router.replace("/")}>返回控制台</PrimaryButton>
-          )}
-          {!error ? <Text style={styles.currentStep}>{currentStep}</Text> : null}
-        </Card>
+              );
+            })}
+          </View>
+        )}
       </View>
     </Screen>
   );
@@ -107,54 +156,96 @@ export default function GenerateScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    padding: spacing.lg
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xxxl,
+    alignItems: "center"
   },
-  panel: {
-    gap: spacing.lg
-  },
-  indicator: {
+  statusIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: radii.pill,
+    backgroundColor: colors.dangerSoft,
     alignItems: "center",
-    backgroundColor: colors.primarySoft,
-    borderRadius: radii.lg,
-    height: 48,
     justifyContent: "center",
-    width: 48
+    marginBottom: spacing.xl
   },
-  errorMark: {
-    color: colors.danger,
-    fontSize: 22,
-    fontWeight: "900"
+  sheepStage: {
+    width: 180,
+    height: 180,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.lg
   },
-  stepList: {
+  sheepHaloOuter: {
+    position: "absolute",
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: colors.primarySoft,
+    opacity: 0.45
+  },
+  sheepHaloInner: {
+    position: "absolute",
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: colors.primarySoft
+  },
+  errorActions: {
+    width: "100%",
     gap: spacing.md,
-    marginTop: spacing.sm
+    marginTop: spacing.xxl
+  },
+  steps: {
+    width: "100%",
+    marginTop: spacing.xxxl,
+    paddingHorizontal: spacing.lg
   },
   stepRow: {
-    alignItems: "center",
     flexDirection: "row",
-    gap: spacing.sm
+    alignItems: "flex-start",
+    gap: spacing.lg,
+    paddingVertical: spacing.lg
   },
-  dot: {
-    backgroundColor: colors.border,
-    borderRadius: 4,
-    height: 8,
-    width: 8
+  stepIndex: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: hairlineWidth,
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.card,
+    alignItems: "center",
+    justifyContent: "center"
   },
-  dotActive: {
+  stepIndexActive: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySoft
+  },
+  stepIndexDone: {
+    borderColor: colors.primary,
     backgroundColor: colors.primary
   },
-  stepText: {
+  stepIndexText: {
+    fontSize: 11,
+    fontWeight: "600",
     color: colors.textTertiary,
+    letterSpacing: 0.3
+  },
+  stepIndexTextActive: {
+    color: colors.primary
+  },
+  stepBody: {
+    flex: 1,
+    gap: 4
+  },
+  stepTitle: {
     fontSize: 15,
-    fontWeight: "700"
+    color: colors.textPrimary,
+    fontWeight: "500"
   },
-  stepTextActive: {
-    color: colors.textPrimary
-  },
-  currentStep: {
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: "900"
+  stepCaption: {
+    fontSize: 12,
+    color: colors.textTertiary,
+    lineHeight: 18
   }
 });

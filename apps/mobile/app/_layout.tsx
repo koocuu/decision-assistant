@@ -1,20 +1,21 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { colors } from "../src/theme/tokens";
 
 export default function RootLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <SafeAreaProvider style={{ backgroundColor: colors.background }}>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerShown: false,
+          animation: "slide_from_right",
           contentStyle: {
             backgroundColor: colors.background
           }
         }}
       />
-    </View>
+    </SafeAreaProvider>
   );
 }
