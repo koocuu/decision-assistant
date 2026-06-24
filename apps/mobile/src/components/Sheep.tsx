@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Animated, Easing } from "react-native";
 import Svg, { Circle, Ellipse, G, Path } from "react-native-svg";
 
@@ -34,7 +34,7 @@ export function Sheep({
   animate?: boolean;
 }) {
   const spread = mood === "thinking" ? 24 : 14;
-  const bob = useRef(new Animated.Value(0)).current;
+  const [bob] = useState(() => new Animated.Value(0));
   const amplitude = mood === "thinking" ? 9 : 4;
 
   useEffect(() => {
