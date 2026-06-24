@@ -33,10 +33,10 @@ const emptyOptions: OptionInput[] = [
 ];
 
 const inputClass =
-  "h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring";
+  "h-12 rounded-xl border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring sm:h-10 sm:rounded-md";
 
 const textareaClass =
-  "min-h-28 rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
+  "min-h-28 rounded-xl border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring sm:rounded-md";
 
 export async function createDecision(draft: DecisionDraft) {
   const response = await fetch("/api/decisions", {
@@ -164,11 +164,11 @@ export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: Dec
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="p-5 sm:p-6">
         <CardTitle>手动填写 / 高级模式</CardTitle>
         <CardDescription>需要精确记录时，可以展开这些结构化字段。</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
         <form className="grid gap-6" onSubmit={handleSubmit}>
           {error ? (
             <div className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -217,7 +217,7 @@ export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: Dec
           <div className="grid gap-3">
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-medium">选项 *</span>
-              <Button type="button" variant="outline" size="sm" onClick={addOption}>
+              <Button className="rounded-xl sm:rounded-md" type="button" variant="outline" size="sm" onClick={addOption}>
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 增加选项
               </Button>
@@ -225,7 +225,7 @@ export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: Dec
 
             <div className="grid gap-3">
               {options.map((option, index) => (
-                <div key={index} className="grid gap-3 rounded-md border p-4 md:grid-cols-[0.8fr_1fr_auto]">
+                <div key={index} className="grid gap-3 rounded-xl border p-4 md:grid-cols-[0.8fr_1fr_auto]">
                   <label className="grid gap-2">
                     <span className="text-sm text-muted-foreground">选项 {index + 1}</span>
                     <input
@@ -287,7 +287,7 @@ export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: Dec
               {decisionEmotions.map((emotion) => (
                 <label
                   key={emotion}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition hover:bg-accent"
+                  className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition hover:bg-accent sm:rounded-md"
                 >
                   <input
                     checked={emotions.includes(emotion)}
@@ -311,8 +311,8 @@ export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: Dec
             />
           </label>
 
-          <div className="flex items-center gap-3">
-            <Button disabled={isSubmitting} type="submit">
+          <div className="grid gap-3 sm:flex sm:items-center">
+            <Button className="h-12 rounded-xl sm:h-10 sm:rounded-md" disabled={isSubmitting} type="submit">
               {isSubmitting ? "提交中..." : submitLabel}
             </Button>
           </div>

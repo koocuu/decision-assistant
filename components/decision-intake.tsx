@@ -98,15 +98,15 @@ export function DecisionIntake() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <Card className="border-primary/20">
-        <CardHeader>
+        <CardHeader className="p-5 sm:p-6">
           <CardTitle>你现在在纠结什么？</CardTitle>
           <CardDescription>随便写，不用整理。AI 会先帮你拆成一个决策草稿。</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-5 pt-0 sm:p-6 sm:pt-0">
           <textarea
-            className="min-h-56 w-full rounded-md border bg-background px-4 py-3 text-base leading-7 outline-none focus:ring-2 focus:ring-ring"
+            className="min-h-48 w-full rounded-xl border bg-background px-4 py-3 text-base leading-7 outline-none focus:ring-2 focus:ring-ring sm:min-h-56"
             placeholder={`随便写，不用整理。比如：\n我在纠结要不要每天训练小太阳定点排便。我有点洁癖，怕它到处拉屎，但又怕训练太麻烦，最后变成讨厌宠物。`}
             value={rawText}
             onChange={(event) => setRawText(event.target.value)}
@@ -116,12 +116,17 @@ export function DecisionIntake() {
               {error}
             </div>
           ) : null}
-          <div className="flex flex-wrap gap-3">
-            <Button disabled={isParsing} type="button" onClick={parseDecision}>
+          <div className="grid gap-3 sm:flex sm:flex-wrap">
+            <Button className="h-12 rounded-xl sm:h-10" disabled={isParsing} type="button" onClick={parseDecision}>
               <Sparkles className="h-4 w-4" aria-hidden="true" />
               {isParsing ? "正在帮你整理纠结..." : "AI 帮我整理"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setShowAdvanced((current) => !current)}>
+            <Button
+              className="h-12 rounded-xl sm:h-10"
+              type="button"
+              variant="outline"
+              onClick={() => setShowAdvanced((current) => !current)}
+            >
               {showAdvanced ? "收起高级模式" : "手动填写 / 高级模式"}
             </Button>
           </div>
@@ -130,11 +135,11 @@ export function DecisionIntake() {
 
       {draft ? (
         <Card>
-          <CardHeader>
+          <CardHeader className="p-5 sm:p-6">
             <CardTitle>决策草稿</CardTitle>
             <CardDescription>AI 已帮你整理成下面这个决策草稿，你可以直接确认，也可以展开修改。</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-5 p-5 pt-0 sm:p-6 sm:pt-0">
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <p className="text-sm text-muted-foreground">标题</p>
@@ -182,11 +187,16 @@ export function DecisionIntake() {
                 )}
               </div>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Button disabled={isSubmitting} type="button" onClick={confirmDraft}>
+            <div className="grid gap-3 sm:flex sm:flex-wrap">
+              <Button className="h-12 rounded-xl sm:h-10" disabled={isSubmitting} type="button" onClick={confirmDraft}>
                 {isSubmitting ? "正在创建..." : "确认并生成分析"}
               </Button>
-              <Button type="button" variant="outline" onClick={() => setShowDraftEditor((current) => !current)}>
+              <Button
+                className="h-12 rounded-xl sm:h-10"
+                type="button"
+                variant="outline"
+                onClick={() => setShowDraftEditor((current) => !current)}
+              >
                 {showDraftEditor ? (
                   <ChevronUp className="h-4 w-4" aria-hidden="true" />
                 ) : (

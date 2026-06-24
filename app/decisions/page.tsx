@@ -89,7 +89,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
         action={
           <Link
             href="/decisions/new"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 sm:h-10 sm:rounded-md"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             新建决策
@@ -97,17 +97,17 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
         }
       />
 
-      <Card className="mb-6">
-        <CardHeader>
+      <Card className="mb-5 sm:mb-6">
+        <CardHeader className="p-5 sm:p-6">
           <CardTitle>筛选</CardTitle>
           <CardDescription>筛选条件会保存在地址栏里，方便返回和分享。</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
           <form className="grid gap-3 md:grid-cols-[1fr_1fr_auto_auto]" action="/decisions">
             <label className="grid gap-2">
               <span className="text-sm font-medium">分类</span>
               <select
-                className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+                className="h-12 rounded-xl border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring sm:h-10 sm:rounded-md"
                 defaultValue={selectedCategory}
                 name="category"
               >
@@ -123,7 +123,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
             <label className="grid gap-2">
               <span className="text-sm font-medium">状态</span>
               <select
-                className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+                className="h-12 rounded-xl border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring sm:h-10 sm:rounded-md"
                 defaultValue={selectedStatus}
                 name="status"
               >
@@ -137,13 +137,13 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
             </label>
 
             <button
-              className="h-10 self-end rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+              className="h-12 self-end rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 sm:h-10 sm:rounded-md"
               type="submit"
             >
               应用筛选
             </button>
             <Link
-              className="inline-flex h-10 items-center justify-center self-end rounded-md border px-4 text-sm font-medium transition hover:bg-accent"
+              className="inline-flex h-12 items-center justify-center self-end rounded-xl border px-4 text-sm font-medium transition hover:bg-accent sm:h-10 sm:rounded-md"
               href="/decisions"
             >
               清除
@@ -157,7 +157,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
           {decisions.map((decision) => (
             <Link key={decision.id} className="block" href={`/decisions/${decision.id}`}>
               <Card className="transition hover:border-primary/50 hover:shadow-md">
-                <CardHeader>
+                <CardHeader className="p-5 sm:p-6">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
                       <CardTitle>{decision.title}</CardTitle>
@@ -170,7 +170,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
                     </span>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
                   <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
                     <div className="space-y-2">
                       <p className="text-sm font-medium">最终选择</p>
@@ -180,7 +180,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
                     </div>
 
                     {decision.review ? (
-                      <div className="rounded-md border px-4 py-3 text-sm">
+                      <div className="rounded-xl border px-4 py-3 text-sm sm:rounded-md">
                         <p className="text-muted-foreground">后悔分</p>
                         <p className="mt-1 text-2xl font-semibold">{decision.review.regretScore}</p>
                       </div>
@@ -204,7 +204,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
               {selectedCategory || selectedStatus ? "当前筛选条件下没有决策。" : "还没有保存的决策，写下第一个纠结吧。"}
             </p>
             <Link
-              className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+              className="mt-4 inline-flex h-12 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 sm:h-10 sm:rounded-md"
               href={buildFilterHref()}
             >
               查看全部

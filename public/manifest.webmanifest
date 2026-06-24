@@ -1,0 +1,43 @@
+{
+  "name": "决策助手",
+  "short_name": "决策助手",
+  "description": "把纠结收敛成一个低后悔行动。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F5F2",
+  "theme_color": "#F6F5F2",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "整理纠结",
+      "short_name": "整理",
+      "description": "快速创建一条新决策",
+      "url": "/decisions/new",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "历史决策",
+      "short_name": "记录",
+      "description": "查看已有决策记录",
+      "url": "/decisions",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
