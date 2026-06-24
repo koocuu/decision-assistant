@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { decisionCategories, decisionEmotions } from "@/lib/decision-constants";
 import { decisionStatuses } from "@/lib/decision-status";
 import { decisionOwnerWhere, ownerData, resolveIdentityFromRequest } from "@/lib/identity";
+import { parseStoredAiAnalysis } from "@/lib/ai-analysis";
 import type { DecisionStatus } from "@/lib/types";
 
 type DecisionOptionPayload = {
@@ -73,6 +74,27 @@ function parseEmotions(value: unknown) {
   );
 }
 
+function parseStoredArray(value: string | null) {
+  if (!value) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function serializeDecision<T extends { emotions: string | null; aiAnalysis: string | null }>(decision: T) {
+  return {
+    ...decision,
+    emotions: parseStoredArray(decision.emotions),
+    aiAnalysis: parseStoredAiAnalysis(decision.aiAnalysis)
+  };
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -92,9 +114,13 @@ export async function GET(request: Request) {
     const decisions = await db.decision.findMany({
       where,
       include: {
+        options: true,
         review: {
           select: {
+            actualResult: true,
+            outcome: true,
             regretScore: true,
+            lesson: true,
             reviewedAt: true
           }
         }
@@ -104,7 +130,7 @@ export async function GET(request: Request) {
       }
     });
 
-    return NextResponse.json({ decisions });
+    return NextResponse.json({ decisions: decisions.map(serializeDecision) });
   } catch (error) {
     console.error("Failed to list decisions", error);
     return NextResponse.json({ error: "获取决策列表失败，请稍后再试。" }, { status: 500 });

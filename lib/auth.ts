@@ -59,11 +59,22 @@ export async function createSession(userId: string) {
 
   const cookieStore = await cookies();
   cookieStore.set(sessionCookieName, token, cookieOptions());
+
+  return token;
 }
 
-export async function clearSession() {
+export function getBearerToken(authorizationHeader?: string | null) {
+  if (!authorizationHeader) {
+    return null;
+  }
+
+  const [scheme, token] = authorizationHeader.split(" ");
+  return scheme?.toLowerCase() === "bearer" && token ? token : null;
+}
+
+export async function clearSession(tokenOverride?: string | null) {
   const cookieStore = await cookies();
-  const token = cookieStore.get(sessionCookieName)?.value;
+  const token = tokenOverride || cookieStore.get(sessionCookieName)?.value;
 
   if (token) {
     await db.userSession.deleteMany({

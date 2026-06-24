@@ -1,23 +1,45 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ListGroup, ListRow } from "../../src/components/ListRow";
 import { Screen } from "../../src/components/Primitives";
-import { getApiBaseUrl } from "../../src/services/api";
+import { getApiBaseUrl, getSession, logout } from "../../src/services/api";
 import { clearHistory, loadHistory } from "../../src/storage/history";
 import { colors, hairlineWidth, radii, spacing } from "../../src/theme/tokens";
 
 const APP_VERSION = "0.1.0";
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const [historyCount, setHistoryCount] = useState(0);
+  const [email, setEmail] = useState("");
+  const [loadingSession, setLoadingSession] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
       loadHistory().then((items) => setHistoryCount(items.length));
+      setLoadingSession(true);
+      getSession()
+        .then((user) => setEmail(user?.email || ""))
+        .catch(() => setEmail(""))
+        .finally(() => setLoadingSession(false));
     }, [])
   );
+
+  async function confirmLogout() {
+    Alert.alert("退出登录", "退出后本机仍可匿名使用，已同步的记录会留在账号里。", [
+      { text: "取消", style: "cancel" },
+      {
+        text: "退出",
+        style: "destructive",
+        onPress: async () => {
+          await logout();
+          setEmail("");
+        }
+      }
+    ]);
+  }
 
   function confirmClearHistory() {
     Alert.alert("清空本地历史", "只删除 App 本机历史，不影响 Web 数据库。", [
@@ -41,16 +63,26 @@ export default function SettingsScreen() {
           <Text style={styles.subtitle}>账号、连接与本地数据</Text>
         </View>
 
-        {/* Profile placeholder */}
-        <Pressable style={({ pressed }) => [styles.profile, pressed ? { opacity: 0.85 } : null]}>
+        <Pressable
+          onPress={email ? undefined : () => router.push("/auth")}
+          style={({ pressed }) => [styles.profile, pressed && !email ? { opacity: 0.85 } : null]}
+        >
           <View style={styles.avatar}>
             <Ionicons name="person-outline" size={22} color={colors.textSecondary} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.profileTitle}>未登录</Text>
-            <Text style={styles.profileMeta}>账号同步将在后续版本开放</Text>
+            <Text style={styles.profileTitle}>{loadingSession ? "读取账号中" : email || "匿名使用中"}</Text>
+            <Text style={styles.profileMeta}>
+              {email ? "历史记录会跟随账号同步" : "登录后历史记录可跨端查看"}
+            </Text>
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
+          {email ? (
+            <Pressable onPress={confirmLogout} hitSlop={8} style={styles.logoutButton}>
+              <Text style={styles.logoutText}>退出</Text>
+            </Pressable>
+          ) : (
+            <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
+          )}
         </Pressable>
 
         <ListGroup title="服务连接">
@@ -148,67 +180,22 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
     marginTop: 2
   },
+  logoutButton: {
+    borderRadius: radii.sm,
+    backgroundColor: colors.dangerSoft,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm
+  },
+  logoutText: {
+    fontSize: 13,
+    color: colors.danger,
+    fontWeight: "600"
+  },
   footer: {
     fontSize: 11,
     color: colors.textTertiary,
     textAlign: "center",
     marginTop: spacing.xxl,
     letterSpacing: 0.3
-  },
-  modalBackdrop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: colors.scrim
-  },
-  modalSheet: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: colors.card,
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
-    borderTopWidth: hairlineWidth,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xxxl
-  },
-  modalHandle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.borderStrong,
-    alignSelf: "center",
-    marginBottom: spacing.lg
-  },
-  modalField: {
-    marginBottom: spacing.lg
-  },
-  modalLabel: {
-    fontSize: 12,
-    color: colors.textTertiary,
-    fontWeight: "500",
-    letterSpacing: 0.3,
-    marginBottom: spacing.sm
-  },
-  modalInput: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radii.md,
-    borderWidth: hairlineWidth,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    fontSize: 15,
-    color: colors.textPrimary,
-    minHeight: 48
-  },
-  modalActions: {
-    flexDirection: "row",
-    gap: spacing.md,
-    marginTop: spacing.sm
   }
 });

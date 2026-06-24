@@ -53,10 +53,10 @@ export async function POST(request: Request) {
       }
     });
 
-    await createSession(user.id);
+    const token = await createSession(user.id);
     await claimAnonData(user.id, getAnonIdFromRequest(request) || "");
 
-    return NextResponse.json({ user: publicUser(user) }, { status: 201 });
+    return NextResponse.json({ user: publicUser(user), token }, { status: 201 });
   } catch (error) {
     console.error("Failed to register account", error);
     return NextResponse.json({ error: "注册失败，请稍后再试。" }, { status: 500 });

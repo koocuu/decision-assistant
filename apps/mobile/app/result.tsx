@@ -18,6 +18,7 @@ import {
   Tag
 } from "../src/components/Primitives";
 import { normalizeReportAnalysis } from "../src/services/normalizeReportAnalysis";
+import { fetchDecisionReport, submitDecisionReview } from "../src/services/api";
 import { findReport, updateReportReview } from "../src/storage/history";
 import { colors, hairlineWidth, radii, spacing, tabularNums } from "../src/theme/tokens";
 import type { DecisionReport, DecisionReview } from "../src/types/decision";
@@ -86,10 +87,22 @@ export default function ResultScreen() {
   const [savingReview, setSavingReview] = useState(false);
 
   useEffect(() => {
-    findReport(params.id || "").then((nextReport) => {
-      setReport(nextReport);
-      setLoaded(true);
-    });
+    let cancelled = false;
+
+    async function loadReport() {
+      const id = params.id || "";
+      const nextReport = await fetchDecisionReport(id).catch(() => findReport(id));
+
+      if (!cancelled) {
+        setReport(nextReport);
+        setLoaded(true);
+      }
+    }
+
+    loadReport();
+    return () => {
+      cancelled = true;
+    };
   }, [params.id]);
 
   function openReviewModal() {
@@ -114,12 +127,13 @@ export default function ResultScreen() {
 
     try {
       setSavingReview(true);
+      await submitDecisionReview(report.id, review);
       const updated = await updateReportReview(report.id, review);
       if (!updated) {
-        Alert.alert("保存失败", "没有找到这份本地报告，请返回记录页后重试。");
-        return;
+        setReport({ ...report, review, reviewStatus: "reviewed" });
+      } else {
+        setReport({ ...report, review, reviewStatus: "reviewed" });
       }
-      setReport({ ...report, review, reviewStatus: "reviewed" });
       setReviewOpen(false);
     } catch {
       Alert.alert("保存失败", "复盘记录暂时没有保存成功，请稍后再试。");

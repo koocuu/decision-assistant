@@ -32,10 +32,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "邮箱或密码不正确。" }, { status: 401 });
     }
 
-    await createSession(user.id);
+    const token = await createSession(user.id);
     await claimAnonData(user.id, getAnonIdFromRequest(request) || "");
 
-    return NextResponse.json({ user: publicUser(user) });
+    return NextResponse.json({ user: publicUser(user), token });
   } catch (error) {
     console.error("Failed to login", error);
     return NextResponse.json({ error: "登录失败，请稍后再试。" }, { status: 500 });

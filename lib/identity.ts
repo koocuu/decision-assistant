@@ -1,7 +1,7 @@
 import { cookies, headers } from "next/headers";
 import type { Prisma } from "@prisma/client";
 import { anonCookieName, anonHeaderName, createAnonId, getAnonIdFromRequest } from "@/lib/anon";
-import { getCurrentUser, getUserFromSessionToken, sessionCookieName } from "@/lib/auth";
+import { getBearerToken, getCurrentUser, getUserFromSessionToken, sessionCookieName } from "@/lib/auth";
 
 export type Identity =
   | { kind: "user"; userId: string; email: string }
@@ -37,7 +37,9 @@ export async function resolveIdentity(): Promise<Identity> {
 }
 
 export async function resolveIdentityFromRequest(request: Request): Promise<Identity> {
-  const sessionToken = getCookieValue(request.headers.get("cookie"), sessionCookieName);
+  const sessionToken =
+    getBearerToken(request.headers.get("authorization")) ||
+    getCookieValue(request.headers.get("cookie"), sessionCookieName);
   const user = await getUserFromSessionToken(sessionToken);
   if (user) {
     return { kind: "user", userId: user.id, email: user.email };

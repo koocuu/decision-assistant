@@ -13,6 +13,7 @@ import {
   SectionHeader
 } from "../../src/components/Primitives";
 import { Sheep } from "../../src/components/Sheep";
+import { listDecisionReports } from "../../src/services/api";
 import { loadHistory, loadPendingInput, setPendingInput } from "../../src/storage/history";
 import { colors, hairlineWidth, radii, spacing, tabularNums } from "../../src/theme/tokens";
 import { decisionCategories, type DecisionCategory, type DecisionReport } from "../../src/types/decision";
@@ -49,7 +50,9 @@ export default function DashboardScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      loadHistory().then(setHistory);
+      listDecisionReports()
+        .then(setHistory)
+        .catch(() => loadHistory().then(setHistory));
       loadPendingInput().then((pendingInput) => {
         if (!pendingInput) return;
         setRawText(pendingInput.rawText);

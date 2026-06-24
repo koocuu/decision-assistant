@@ -103,10 +103,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         "Content-Type": "application/json"
       });
       const cookie = request.headers.get("cookie");
+      const authorization = request.headers.get("authorization");
       const anonId = request.headers.get("x-anon-id");
 
       if (cookie) {
         headers.set("cookie", cookie);
+      }
+
+      if (authorization) {
+        headers.set("authorization", authorization);
       }
 
       if (anonId) {

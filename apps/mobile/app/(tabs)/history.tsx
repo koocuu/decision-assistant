@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { RecentDecisionRow } from "../../src/components/DecisionCards";
 import { AppText, Button, Card, Screen } from "../../src/components/Primitives";
 import { Sheep } from "../../src/components/Sheep";
+import { listDecisionReports } from "../../src/services/api";
 import { loadHistory } from "../../src/storage/history";
 import { colors, hairlineWidth, radii, spacing, tabularNums } from "../../src/theme/tokens";
 import type { DecisionReport } from "../../src/types/decision";
@@ -20,7 +21,9 @@ export default function HistoryScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      loadHistory().then(setHistory);
+      listDecisionReports()
+        .then(setHistory)
+        .catch(() => loadHistory().then(setHistory));
     }, [])
   );
 
@@ -55,7 +58,7 @@ export default function HistoryScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.title}>决策记录</Text>
-          <Text style={styles.subtitle}>本机生成的全部报告，按月归档</Text>
+          <Text style={styles.subtitle}>登录后跨端同步，匿名也会保留本机缓存</Text>
         </View>
 
         {history.length > 0 ? (
