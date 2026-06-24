@@ -9,6 +9,8 @@ datasource db {
 
 model Decision {
   id          String           @id @default(cuid())
+  userId      String?
+  anonId      String?
   title       String
   category    String?
   background  String
@@ -29,6 +31,8 @@ model Decision {
   @@index([category])
   @@index([createdAt])
   @@index([reviewDate])
+  @@index([userId])
+  @@index([anonId])
 }
 
 model DecisionOption {
@@ -56,6 +60,8 @@ model DecisionReview {
 
 model UserProfile {
   id                 String   @id @default(cuid())
+  userId             String?  @unique
+  anonId             String?  @unique
   summary            String?
   commonCategories   String?  // JSON string
   commonConcerns     String?  // JSON string
@@ -65,6 +71,24 @@ model UserProfile {
   highRegretPatterns String?  // JSON string
   lowRegretPatterns  String?  // JSON string
   updatedAt          DateTime @updatedAt
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// 速率限制计数（按 key = identity|ip + 窗口）。早期用 DB；规模上来可换 KV/Redis。
+model RateLimit {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+
+  @@index([windowStart])
 }
 
 enum DecisionStatus {
