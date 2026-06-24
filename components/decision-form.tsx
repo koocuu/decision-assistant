@@ -24,6 +24,7 @@ export type DecisionDraft = {
 
 type DecisionFormProps = {
   initialDraft?: DecisionDraft;
+  redirectToAnalyze?: boolean;
   submitLabel?: string;
 };
 
@@ -70,7 +71,7 @@ export async function createDecision(draft: DecisionDraft) {
   return data.id;
 }
 
-export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: DecisionFormProps) {
+export function DecisionForm({ initialDraft, redirectToAnalyze = false, submitLabel = "保存决策" }: DecisionFormProps) {
   const [title, setTitle] = useState(initialDraft?.title ?? "");
   const [category, setCategory] = useState(initialDraft?.category ?? "");
   const [background, setBackground] = useState(initialDraft?.background ?? "");
@@ -154,7 +155,7 @@ export function DecisionForm({ initialDraft, submitLabel = "保存决策" }: Dec
 
     try {
       const id = await createDecision(draft);
-      window.location.assign(`/decisions/${id}`);
+      window.location.assign(redirectToAnalyze ? `/decisions/${id}/analyzing` : `/decisions/${id}`);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "创建决策失败，请稍后再试。");
     } finally {

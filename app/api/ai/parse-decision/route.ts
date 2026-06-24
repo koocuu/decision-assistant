@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { extractJsonText } from "@/lib/ai-analysis";
 import { callDeepSeek } from "@/lib/deepseek";
 import { decisionCategories, decisionEmotions } from "@/lib/decision-constants";
+import { resolveIdentityFromRequest } from "@/lib/identity";
 import { buildParseDecisionMessages } from "@/lib/prompts";
+import { consumeAiQuota } from "@/lib/ratelimit";
 
 type ParsePayload = {
   rawText?: unknown;
@@ -50,6 +52,11 @@ export async function POST(request: Request) {
 
     if (!rawText) {
       return NextResponse.json({ error: "请先写下你正在纠结的事。" }, { status: 400 });
+    }
+
+    const quota = await consumeAiQuota(await resolveIdentityFromRequest(request), request);
+    if (!quota.allowed) {
+      return NextResponse.json({ error: quota.reason }, { status: 429 });
     }
 
     const rawDraft = await callDeepSeek(buildParseDecisionMessages(rawText));

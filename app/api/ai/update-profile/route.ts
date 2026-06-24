@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { extractJsonText } from "@/lib/ai-analysis";
 import { callDeepSeek } from "@/lib/deepseek";
 import { db } from "@/lib/db";
+import { decisionOwnerWhere, ownerData, profileOwnerWhere, resolveIdentityFromRequest } from "@/lib/identity";
 import { buildUserProfileUpdateMessages } from "@/lib/prompts";
+import { consumeAiQuota } from "@/lib/ratelimit";
 
 type UpdateProfilePayload = {
   decisionId?: unknown;
@@ -42,8 +44,9 @@ function parseProfileUpdate(content: string): ProfileUpdate {
   };
 }
 
-async function getOrCreateDefaultProfile() {
+async function getOrCreateProfile(identity: Awaited<ReturnType<typeof resolveIdentityFromRequest>>) {
   const existingProfile = await db.userProfile.findFirst({
+    where: profileOwnerWhere(identity),
     select: {
       id: true,
       summary: true,
@@ -64,7 +67,7 @@ async function getOrCreateDefaultProfile() {
 
   return db.userProfile.create({
     data: {
-      id: "default",
+      ...ownerData(identity),
       summary: "",
       commonCategories: JSON.stringify([]),
       commonConcerns: JSON.stringify([]),
@@ -91,14 +94,16 @@ async function getOrCreateDefaultProfile() {
 
 export async function POST(request: Request) {
   const payload = (await request.json().catch(() => ({}))) as UpdateProfilePayload;
+  const identity = await resolveIdentityFromRequest(request);
 
   if (typeof payload.decisionId !== "string" || payload.decisionId.trim().length === 0) {
     return NextResponse.json({ error: "decisionId is required." }, { status: 400 });
   }
 
-  const decision = await db.decision.findUnique({
+  const decision = await db.decision.findFirst({
     where: {
-      id: payload.decisionId
+      id: payload.decisionId,
+      ...decisionOwnerWhere(identity)
     },
     include: {
       options: true,
@@ -114,7 +119,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Decision review not found." }, { status: 400 });
   }
 
-  const oldProfile = await getOrCreateDefaultProfile();
+  const quota = await consumeAiQuota(identity, request);
+  if (!quota.allowed) {
+    return NextResponse.json({ error: quota.reason }, { status: 429 });
+  }
+
+  const oldProfile = await getOrCreateProfile(identity);
 
   try {
     const messages = buildUserProfileUpdateMessages(decision, oldProfile);

@@ -1,7 +1,11 @@
+import { AccountPanel } from "@/components/account-panel";
 import { PageHeader } from "@/components/page-header";
 import { Sheep } from "@/components/sheep";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCurrentUser, publicUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { profileOwnerWhere, resolveIdentity } from "@/lib/identity";
+import type { Identity } from "@/lib/identity";
 
 export const dynamic = "force-dynamic";
 
@@ -35,8 +39,9 @@ function hasProfileContent(profile: Awaited<ReturnType<typeof getProfile>>) {
   );
 }
 
-async function getProfile() {
+async function getProfile(identity: Identity) {
   return db.userProfile.findFirst({
+    where: profileOwnerWhere(identity),
     orderBy: {
       updatedAt: "desc"
     }
@@ -74,12 +79,23 @@ function PatternList({ items }: { items: string[] }) {
 }
 
 export default async function ProfilePage() {
-  const profile = await getProfile();
+  const [identity, user] = await Promise.all([resolveIdentity(), getCurrentUser()]);
+  const profile = await getProfile(identity);
 
   if (!hasProfileContent(profile)) {
     return (
       <div>
-        <PageHeader title="用户画像" description="基于决策复盘逐步更新，不做一次性结论。" />
+        <PageHeader title="我的" description="账号状态和基于复盘逐步更新的决策画像。" />
+
+        <Card className="mb-5 sm:mb-6">
+          <CardHeader>
+            <CardTitle>账号</CardTitle>
+            <CardDescription>匿名也可以完整使用；登录后历史记录会跟随账号。</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AccountPanel initialUser={publicUser(user)} />
+          </CardContent>
+        </Card>
 
         <Card>
           <CardContent className="flex flex-col items-center p-8 text-center">
@@ -145,9 +161,19 @@ export default async function ProfilePage() {
 
   return (
     <div>
-      <PageHeader title="用户画像" description="基于历史决策和复盘结果生成的当前版本。" />
+      <PageHeader title="我的" description="账号状态和基于历史决策生成的当前画像。" />
 
       <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>账号</CardTitle>
+            <CardDescription>匿名也可以完整使用；登录后历史记录会跟随账号。</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AccountPanel initialUser={publicUser(user)} />
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>决策人格摘要</CardTitle>

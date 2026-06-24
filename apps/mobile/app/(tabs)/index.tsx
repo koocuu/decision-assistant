@@ -13,7 +13,6 @@ import {
   SectionHeader
 } from "../../src/components/Primitives";
 import { Sheep } from "../../src/components/Sheep";
-import { loadAiAuth } from "../../src/storage/auth";
 import { loadHistory, loadPendingInput, setPendingInput } from "../../src/storage/history";
 import { colors, hairlineWidth, radii, spacing, tabularNums } from "../../src/theme/tokens";
 import { decisionCategories, type DecisionCategory, type DecisionReport } from "../../src/types/decision";
@@ -34,7 +33,6 @@ export default function DashboardScreen() {
   const [rawText, setRawText] = useState("");
   const [category, setCategory] = useState<DecisionCategory>("工作");
   const [history, setHistory] = useState<DecisionReport[]>([]);
-  const [authConfigured, setAuthConfigured] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const stats = useMemo(() => {
@@ -52,7 +50,6 @@ export default function DashboardScreen() {
   useFocusEffect(
     useCallback(() => {
       loadHistory().then(setHistory);
-      loadAiAuth().then((auth) => setAuthConfigured(Boolean(auth)));
       loadPendingInput().then((pendingInput) => {
         if (!pendingInput) return;
         setRawText(pendingInput.rawText);
@@ -66,20 +63,6 @@ export default function DashboardScreen() {
   async function startDecision() {
     if (!rawText.trim()) {
       Alert.alert("先写下问题", "用一两句话描述你正在纠结的选择。");
-      return;
-    }
-
-    const auth = await loadAiAuth();
-    if (!auth) {
-      setAuthConfigured(false);
-      Alert.alert(
-        "需要配置 AI 访问密码",
-        "移动端会连接 decision.koocuu.com 的 AI 接口，请先在「我的」中保存访问密码。",
-        [
-          { text: "稍后", style: "cancel" },
-          { text: "去设置", onPress: () => router.push("/settings") }
-        ]
-      );
       return;
     }
 
@@ -136,12 +119,8 @@ export default function DashboardScreen() {
           <View style={styles.inputHeader}>
             <Text style={styles.inputHeaderTitle}>写下你的问题</Text>
             <View style={styles.inputStatus}>
-              <View
-                style={[styles.inputStatusDot, authConfigured ? { backgroundColor: colors.success } : { backgroundColor: colors.warning }]}
-              />
-              <Text style={[styles.inputStatusText, !authConfigured ? { color: colors.warning } : null]}>
-                {authConfigured ? "小羊已就绪" : "未配置 AI"}
-              </Text>
+              <View style={[styles.inputStatusDot, { backgroundColor: colors.success }]} />
+              <Text style={styles.inputStatusText}>小羊已就绪</Text>
             </View>
           </View>
 

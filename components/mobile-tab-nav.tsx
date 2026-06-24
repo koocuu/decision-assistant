@@ -44,7 +44,7 @@ export function MobileTabNav({ items }: { items: NavItem[] }) {
               )}
             >
               <Icon className="h-5 w-5" aria-hidden="true" />
-              <span>{item.href === "/decisions/new" ? "整理" : item.label.replace("历史决策", "记录").replace("用户画像", "我的")}</span>
+              <span>{item.href === "/decisions/new" ? "整理" : item.label.replace("历史决策", "记录")}</span>
             </Link>
           );
         })}

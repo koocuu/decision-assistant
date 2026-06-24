@@ -7,11 +7,12 @@
 - 日期：2026-06-24
 - 当前工作树分支：`main`
 - 战略方向已调整为：Web/PWA 优先，Expo 原生 App 暂时封存。
-- 当前仓库没有真实 `.env`，只有 `.env.example`。
+- 当前仓库有本地真实 `.env`，但 `.gitignore` 会忽略它；仓库可提交文件里只有 `.env.example`。
 - 本地真实 `.env` 应放在仓库根目录，与 `package.json` 同级。
 - PWA 基础已合入并推送 `main`。
 - 移动端 P0 未提交改动已按用户确认废弃并清理；Expo App 继续作为封存基线保留。
-- `P0-PLAN.md` 已删除；账号体系以 `ROADMAP.md` 的 P0 为准。
+- `P0-PLAN.md` 已删除；账号体系以 `docs/ROADMAP.md` 的 P0 为准。
+- P0 账号体系正在 `main` 上实现，尚未提交。
 
 ## 已完成
 
@@ -28,29 +29,33 @@
 - `npm run build` 通过。
 - 本地验证 `/decisions/new`：manifest 存在、输入框可见、底部 tab 存在、390px 宽无横向溢出。
 - 本地验证 PWA 资源：`/manifest.webmanifest`、`/sw.js`、`/icons/icon-192.png`、`/offline` 均可访问。
-- 清理 Markdown：保留 `ARCHITECTURE.md`、`CONVENTIONS.md`、`PROGRESS.md`、`ROADMAP.md`，删除旧并行移动端计划 `P0-PLAN.md`。
+- 清理 Markdown：保留 `docs/ARCHITECTURE.md`、`docs/CONVENTIONS.md`、`docs/PROGRESS.md`、`docs/ROADMAP.md`，删除旧并行移动端计划 `P0-PLAN.md`。
+- 将根目录 Markdown 收进 `docs/`，根目录保持干净。
+- 新增 P0 账号 schema/migration：`User`、`UserSession`、`RateLimit`，并给 `Decision`、`DecisionReview`、`UserProfile` 增加 `userId/anonId`。
+- 新增 Web/PWA 账号能力：匿名 cookie、session cookie、登录/注册/登出/session/claim API。
+- 首页、历史页、详情页、画像页和决策 API 已按当前身份过滤。
+- AI 生成、分析、画像更新接口已改为身份/IP/全站日额度。
+- `/profile` 现在作为“我的”页，显示匿名/邮箱账号状态和登录/退出入口。
+- 封存的 Expo App 已移除旧的手填 AI 鉴权 UI 和共享鉴权 header。
+- Web 决策创建后会进入 `/decisions/[id]/analyzing`，用小羊分析中页面自动调用 AI，完成后跳转详情页。
+- 生产迁移已执行：`npm run prisma:deploy` 成功应用 `20260624000000_add_accounts` 到 Neon `neondb/public`。
 
 ## 进行中 / 未完成
 
-- P0 账号体系仍需完成并集成。
+- P0 账号体系代码已完成本地验证，尚未提交/推送。
 - PWA 已完成基础能力；还未做 Lighthouse 评分和真机添加到主屏验证。
-- Neon 的 direct/unpooled `DATABASE_URL` 还未填入本地 `.env`。
-- DeepSeek API key 还未填入本地 `.env`。
 - 上一轮移动端改动已清理，不再作为当前主线交付内容。
 
 ## 下一步建议
 
-1. 补根目录 `.env`：
-   - `DATABASE_URL`：Neon direct/unpooled 连接串。
-   - `DEEPSEEK_API_KEY`：Vercel 或 DeepSeek 控制台里的 key。
-2. 有 `DATABASE_URL` 后重新启动本地 dev server，验证首页、历史页、详情页这些依赖 Prisma 的页面。
+1. 提交并推送 `main`，触发 Vercel 部署。
+2. 部署后在线验证匿名生成、注册/登录、历史隔离、账号认领和分析中页面。
 3. 做 Lighthouse/PWA 审计，补缺失项。
-4. 开始 P0 账号体系：schema/migration、身份核心、account API、身份过滤、AI 限流。
 
 ## 坑与注意事项
 
 - 不要把真实 `.env`、Neon 连接串、DeepSeek key 提交进 git。
-- 不要在没有用户确认的情况下跑生产数据库迁移。
+- 本地 `.env` 已用于执行生产迁移，不要提交 `.env`。
 - PWA 是现有 Web 增强，不是另起一个前端项目。
-- Expo App 暂时封存后，不应再因为账号体系同步主动修改 `apps/mobile/**`。
-- 当前本地首页无法可视化验证，是因为缺少 `DATABASE_URL`，Prisma 初始化报错；不是 PWA 静态资源或前端壳子构建失败。
+- Expo App 暂时封存；本轮仅清理旧共享鉴权残留，不做生产化。
+- 生产迁移已经完成，可以推送本轮 P0 代码到 `main`。

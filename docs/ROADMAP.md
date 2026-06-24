@@ -7,9 +7,10 @@
 - Web 已是 Next.js + Prisma + Neon Postgres。
 - PWA 基础已上线到 `main`：manifest、service worker、离线页、移动端底部 tab、安装提示。
 - Expo App 代码保留在仓库中，但当前不主动维护。
-- 账号体系尚未实现：没有 `User` 表，没有登录/注册接口，没有 `userId`/`anonId` 数据隔离。
-- 目前只有 `/api/ai/*` 被 Basic Auth 密码墙保护；页面和 `/api/decisions` 仍是公开读写。
-- `UserProfile` 当前是全局画像，不是按用户隔离。
+- P0 账号体系已进入实现：`User`、`UserSession`、`RateLimit`、`userId/anonId` 归属字段已加入 schema 和 migration。
+- Web/PWA 已改为匿名优先：匿名 cookie 自动生成；登录/注册后认领匿名数据。
+- AI 接口改为服务端 DeepSeek key + 身份/IP/全站日额度。
+- `Decision / DecisionReview / UserProfile` 的 Web 页面与 API 查询按当前身份隔离。
 
 ## P0 · 账号与数据隔离
 
@@ -17,11 +18,11 @@
 
 | # | 问题 | 当前风险 | 目标 |
 |---|---|---|---|
-| 1 | 没有账号/身份体系 | 不能多人可信使用 | 可选登录，匿名也能完整生成报告 |
-| 2 | 数据全局共享 | 隐私泄露，任何人可看全库 | `Decision/Review/Profile` 按 `userId` 或 `anonId` 隔离 |
-| 3 | API 公开读写 | `/api/decisions` 无身份过滤 | 所有读写先 `resolveIdentity` |
-| 4 | AI 只靠共享密码 | 体验差，也不能承载公开分发 | 改为服务端代理 + 身份限额 |
-| 5 | 无速率/额度限制 | DeepSeek 成本可被刷爆 | 匿名/登录/IP/全局限额 |
+| 1 | 没有账号/身份体系 | 不能多人可信使用 | 已实现邮箱密码登录/注册，匿名也能完整生成报告 |
+| 2 | 数据全局共享 | 隐私泄露，任何人可看全库 | 已按 `userId` 或 `anonId` 隔离 |
+| 3 | API 公开读写 | `/api/decisions` 无身份过滤 | 已在决策 API 和页面查询接入身份过滤 |
+| 4 | AI 只靠共享密码 | 体验差，也不能承载公开分发 | 已改为服务端代理 + 身份限额 |
+| 5 | 无速率/额度限制 | DeepSeek 成本可被刷爆 | 已加匿名/登录/IP/全局日限额 |
 
 ### P0 拍板方案
 
@@ -29,8 +30,8 @@
 - 匿名策略：Web 生成 `anonId`，存 cookie；未登录也可生成报告。
 - 数据认领：登录/注册后调用 claim，把当前 `anonId` 数据挂到用户。
 - DB：继续用现有 Neon Postgres，不新开账号库。
-- 迁移：可以生成 migration 文件；生产库部署迁移必须由用户明确确认。
-- App：继续封存，不做移动端 P0。
+- 迁移：migration 文件已生成并已部署到生产 Neon。
+- App：继续封存，仅清理旧共享鉴权逻辑，不投入生产化。
 
 ### P0 实施顺序
 
@@ -50,9 +51,9 @@
    - `GET /api/account/session`
    - `POST /api/account/claim`
 4. 决策 API 和页面加身份过滤。
-5. AI 接口去 Basic Auth，改为身份限流。
+5. AI 接口改为身份限流。
 6. Web 登录/注册 UI 和顶栏状态。
-7. 验证后再由用户执行生产迁移并部署。
+7. 验证后执行生产迁移并部署。
 
 ## P1 · Web/PWA 生产化
 
@@ -95,4 +96,3 @@ Expo App 当前封存。只有出现明确上架或原生能力需求时再解�
 - App 图标与 splash
 - 崩溃监控
 - App Store/TestFlight 流程
-

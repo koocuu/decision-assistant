@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sheep } from "@/components/sheep";
 import { db } from "@/lib/db";
 import { decisionStatusLabels } from "@/lib/decision-status";
+import { decisionOwnerWhere, profileOwnerWhere, resolveIdentity } from "@/lib/identity";
 
 export const dynamic = "force-dynamic";
 
@@ -19,16 +20,23 @@ function formatAverage(value: number | null) {
 }
 
 export default async function HomePage() {
+  const identity = await resolveIdentity();
+  const decisionWhere = decisionOwnerWhere(identity);
+  const profileWhere = profileOwnerWhere(identity);
   const [totalDecisions, reviewedDecisions, pendingReviews, regretAggregate, recentDecisions, profile] =
     await Promise.all([
-      db.decision.count(),
+      db.decision.count({
+        where: decisionWhere
+      }),
       db.decision.count({
         where: {
+          ...decisionWhere,
           status: "REVIEWED"
         }
       }),
       db.decision.count({
         where: {
+          ...decisionWhere,
           aiAnalysis: {
             not: null
           },
@@ -36,11 +44,13 @@ export default async function HomePage() {
         }
       }),
       db.decisionReview.aggregate({
+        where: identity.kind === "user" ? { userId: identity.userId } : { anonId: identity.anonId },
         _avg: {
           regretScore: true
         }
       }),
       db.decision.findMany({
+        where: decisionWhere,
         take: 5,
         orderBy: {
           createdAt: "desc"
@@ -54,6 +64,7 @@ export default async function HomePage() {
         }
       }),
       db.userProfile.findFirst({
+        where: profileWhere,
         orderBy: {
           updatedAt: "desc"
         }
@@ -62,6 +73,7 @@ export default async function HomePage() {
 
   const pendingReviewList = await db.decision.findMany({
     where: {
+      ...decisionWhere,
       aiAnalysis: {
         not: null
       },

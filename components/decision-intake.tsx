@@ -89,7 +89,7 @@ export function DecisionIntake() {
 
     try {
       const id = await createDecision(draft);
-      window.location.assign(`/decisions/${id}`);
+      window.location.assign(`/decisions/${id}/analyzing`);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "创建决策失败，请稍后再试。");
     } finally {
@@ -209,7 +209,9 @@ export function DecisionIntake() {
         </Card>
       ) : null}
 
-      {showDraftEditor && draft ? <DecisionForm initialDraft={draft} submitLabel="确认并生成分析" /> : null}
+      {showDraftEditor && draft ? (
+        <DecisionForm initialDraft={draft} redirectToAnalyze submitLabel="确认并生成分析" />
+      ) : null}
       {showAdvanced && !draft ? <DecisionForm /> : null}
     </div>
   );

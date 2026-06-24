@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { db } from "@/lib/db";
 import { decisionCategories } from "@/lib/decision-constants";
 import { decisionStatuses, decisionStatusLabels } from "@/lib/decision-status";
+import { decisionOwnerWhere, resolveIdentity } from "@/lib/identity";
 import type { DecisionStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,8 @@ type DecisionsPageProps = {
 type DecisionWhere = {
   category?: string;
   status?: DecisionStatus;
+  userId?: string;
+  anonId?: string;
 };
 
 function formatDate(date: Date) {
@@ -56,7 +59,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
     resolvedSearchParams.status && (decisionStatuses as readonly string[]).includes(resolvedSearchParams.status)
       ? (resolvedSearchParams.status as DecisionStatus)
       : "";
-  const where: DecisionWhere = {};
+  const where: DecisionWhere = decisionOwnerWhere(await resolveIdentity()) as DecisionWhere;
 
   if (selectedCategory) {
     where.category = selectedCategory;

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
+import { decisionOwnerWhere, ownerData, resolveIdentityFromRequest } from "@/lib/identity";
 
 type ReviewPayload = {
   actualResult?: unknown;
@@ -20,6 +21,7 @@ function optionalString(value: unknown) {
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const identity = await resolveIdentityFromRequest(request);
     const payload = (await request.json()) as ReviewPayload;
     const actualResult = optionalString(payload.actualResult);
     const regretScore = typeof payload.regretScore === "number" ? payload.regretScore : Number(payload.regretScore);
@@ -40,8 +42,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "请选择有效的结果评价。" }, { status: 400 });
     }
 
-    const decision = await db.decision.findUnique({
-      where: { id },
+    const decision = await db.decision.findFirst({
+      where: {
+        id,
+        ...decisionOwnerWhere(identity)
+      },
       select: {
         id: true,
         status: true,
@@ -69,6 +74,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const review = await db.$transaction(async (tx: Prisma.TransactionClient) => {
       const createdReview = await tx.decisionReview.create({
         data: {
+          ...ownerData(identity),
           decisionId: id,
           actualResult,
           regretScore,
@@ -93,11 +99,23 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     try {
       const origin = new URL(request.url).origin;
+      const headers = new Headers({
+        "Content-Type": "application/json"
+      });
+      const cookie = request.headers.get("cookie");
+      const anonId = request.headers.get("x-anon-id");
+
+      if (cookie) {
+        headers.set("cookie", cookie);
+      }
+
+      if (anonId) {
+        headers.set("x-anon-id", anonId);
+      }
+
       const profileResponse = await fetch(`${origin}/api/ai/update-profile`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers,
         body: JSON.stringify({ decisionId: id })
       });
 

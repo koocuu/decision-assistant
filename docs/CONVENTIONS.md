@@ -1,11 +1,11 @@
 # 协作与代码约定
 
-后续 agent 先读 `ARCHITECTURE.md`、`PROGRESS.md`、本文件，再开始改代码。
+后续 agent 先读 `docs/ARCHITECTURE.md`、`docs/ROADMAP.md`、`docs/PROGRESS.md`、本文件，再开始改代码。
 
 ## 接力规则
 
-- 每个 agent 收工前必须更新 `PROGRESS.md`。
-- `PROGRESS.md` 只写活信息：已完成、进行中、下一步、坑、当前分支。
+- 每个 agent 收工前必须更新 `docs/PROGRESS.md`。
+- `docs/PROGRESS.md` 只写活信息：已完成、进行中、下一步、坑、当前分支。
 - 不在一个任务里顺手重构无关文件。
 - 先查真实仓库状态，再给结论。
 - 修改前看 `git status --short --branch`，避免覆盖别人未提交改动。
@@ -14,7 +14,7 @@
 
 - 当前项目允许小步直接在 `main` 上开发并推送，让 Vercel 直接部署。
 - 涉及数据库迁移、账号体系、鉴权、删除数据、支付等高风险改动时，优先开分支或至少先提交可回滚的小步。
-- 原生 Expo App 已决定暂时封存；除非任务明确要求，不主动改 `apps/mobile/**`。
+- 原生 Expo App 已决定暂时封存；除非任务明确要求，不主动改 `apps/mobile/**`。本轮 P0 仅允许清理旧共享鉴权残留。
 - Prisma migration 不自动跑生产库。迁移执行必须由用户明确确认。
 
 ## 环境变量
@@ -61,7 +61,7 @@ Neon 迁移用连接串使用 direct/unpooled 版本，放在根目录 `.env` �
 
 ## P0 账号体系约定
 
-- P0 只做 Web/PWA 账号体系，不改 Expo App。
+- P0 主线是 Web/PWA 账号体系；Expo App 只做封存状态下的旧鉴权逻辑清理。
 - 登录方式默认邮箱 + 密码。
 - 匿名用户必须能完整生成报告。
 - 数据隔离按 `userId` 或 `anonId` 做，不能继续全局共享。

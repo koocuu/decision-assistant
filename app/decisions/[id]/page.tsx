@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { parseStoredAiAnalysis } from "@/lib/ai-analysis";
 import { db } from "@/lib/db";
 import { decisionStatusLabels } from "@/lib/decision-status";
+import { decisionOwnerWhere, resolveIdentity } from "@/lib/identity";
 
 export const dynamic = "force-dynamic";
 
@@ -48,8 +49,11 @@ function Badge({ label, value }: { label: string; value?: string }) {
 
 export default async function DecisionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const decision = await db.decision.findUnique({
-    where: { id },
+  const decision = await db.decision.findFirst({
+    where: {
+      id,
+      ...decisionOwnerWhere(await resolveIdentity())
+    },
     include: {
       options: true,
       review: true

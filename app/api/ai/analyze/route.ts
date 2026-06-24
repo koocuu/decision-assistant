@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { callDeepSeek } from "@/lib/deepseek";
 import { db } from "@/lib/db";
 import { parseAiAnalysis } from "@/lib/ai-analysis";
+import { decisionOwnerWhere, profileOwnerWhere, resolveIdentityFromRequest } from "@/lib/identity";
 import { buildDecisionAnalysisMessages } from "@/lib/prompts";
+import { consumeAiQuota } from "@/lib/ratelimit";
 
 type AnalyzePayload = {
   decisionId?: unknown;
@@ -16,9 +18,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "decisionId is required." }, { status: 400 });
     }
 
-    const decision = await db.decision.findUnique({
+    const identity = await resolveIdentityFromRequest(request);
+    const decision = await db.decision.findFirst({
       where: {
-        id: payload.decisionId
+        id: payload.decisionId,
+        ...decisionOwnerWhere(identity)
       },
       include: {
         options: true
@@ -29,7 +33,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Decision not found." }, { status: 404 });
     }
 
+    const quota = await consumeAiQuota(identity, request);
+    if (!quota.allowed) {
+      return NextResponse.json({ error: quota.reason }, { status: 429 });
+    }
+
     const userProfile = await db.userProfile.findFirst({
+      where: profileOwnerWhere(identity),
       select: {
         summary: true,
         commonCategories: true,

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { AccountStatus } from "@/components/account-status";
 import { Sheep } from "@/components/sheep";
 import { MobileTabNav } from "@/components/mobile-tab-nav";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
@@ -39,7 +40,7 @@ const navItems = [
   { href: "/", label: "首页" },
   { href: "/decisions", label: "历史决策" },
   { href: "/decisions/new", label: "整理纠结" },
-  { href: "/profile", label: "用户画像" }
+  { href: "/profile", label: "我的" }
 ];
 
 export default function RootLayout({
@@ -73,6 +74,7 @@ export default function RootLayout({
                   </Link>
                 ))}
               </nav>
+              <AccountStatus />
             </div>
           </header>
           <main className="mx-auto max-w-6xl px-4 pb-28 pt-5 sm:px-6 sm:py-8">{children}</main>

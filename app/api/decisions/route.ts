@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { decisionCategories, decisionEmotions } from "@/lib/decision-constants";
 import { decisionStatuses } from "@/lib/decision-status";
+import { decisionOwnerWhere, ownerData, resolveIdentityFromRequest } from "@/lib/identity";
 import type { DecisionStatus } from "@/lib/types";
 
 type DecisionOptionPayload = {
@@ -23,6 +24,8 @@ type CreateDecisionPayload = {
 type DecisionWhere = {
   category?: string;
   status?: DecisionStatus;
+  userId?: string;
+  anonId?: string;
 };
 
 function isString(value: unknown): value is string {
@@ -75,7 +78,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const status = searchParams.get("status");
-    const where: DecisionWhere = {};
+    const identity = await resolveIdentityFromRequest(request);
+    const where: DecisionWhere = decisionOwnerWhere(identity) as DecisionWhere;
 
     if (category && (decisionCategories as readonly string[]).includes(category)) {
       where.category = category;
@@ -134,9 +138,11 @@ export async function POST(request: Request) {
     }
 
     const deadline = parseDeadline(payload.deadline);
+    const identity = await resolveIdentityFromRequest(request);
 
     const decision = await db.decision.create({
       data: {
+        ...ownerData(identity),
         title,
         category,
         background,
