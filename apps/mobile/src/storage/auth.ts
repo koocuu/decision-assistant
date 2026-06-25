@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
 const anonIdKey = "anonId";
-const sessionTokenKey = "decision-assistant:session-token";
+const sessionTokenKey = "decision_assistant_session_token";
 
 function createUuid() {
   const cryptoValue = globalThis.crypto?.randomUUID?.();
@@ -39,4 +39,3 @@ export async function saveSessionToken(token: string) {
 export async function clearSessionToken() {
   await SecureStore.deleteItemAsync(sessionTokenKey);
 }
-
