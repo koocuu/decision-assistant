@@ -1,36 +1,36 @@
-<img width="1730" height="2060" alt="image" src="https://github.com/user-attachments/assets/d6b6531d-ce2b-4d7a-8201-c03d1425a3c7" /><img width="1730" height="2060" alt="image" src="https://github.com/user-attachments/assets/cd75a1c6-cd7a-437a-a88f-747f3a7ca829" /># 决策助手 Decision Assistant
+# 决策助手 Decision Assistant
 
-一个带“小羊暖外壳”的 AI 决策工具：用户随手写下纠结，系统把它拆成选项、风险、低后悔行动，并在事后复盘沉淀个人决策画像。
+一个带“小羊暖外壳”的 AI 决策工具：把临时纠结拆成选项、风险、低后悔行动和事后复盘，让个人决策逐步沉淀成可观察的画像。
 
 - 在线体验：https://decision.koocuu.com/
 - 当前定位：作品集 / 简历展示 / 朋友体验
-- 核心闭环：输入纠结 → AI 拆解 → 决策报告 → 复盘 → 个人画像
+- 核心闭环：输入纠结 -> AI 拆解 -> 决策报告 -> 复盘 -> 个人画像
 - Android 展示包：线上首页可扫码或点击按钮下载
 
-## Web + App 高光截图
+## 三端首页
 
-| Web 首页 | App 首页 |
-|---|---|
-| <img width="1769" height="2322" alt="决策助手 Web 首页" src="https://github.com/user-attachments/assets/34ed2a09-7a66-49a0-a9c7-da110c9b5d88" /> | <img width="360" alt="决策助手 App 首页" src="public/screenshots/app-home.jpg" /> |
+| PC Web | 移动 Web | Expo Android |
+|---|---|---|
+| <img width="1769" alt="决策助手 PC Web 首页" src="https://github.com/user-attachments/assets/34ed2a09-7a66-49a0-a9c7-da110c9b5d88" /> | <img width="360" alt="决策助手移动 Web 首页" src="https://github.com/user-attachments/assets/5ca12539-6ac1-4885-9307-0f552a16a88e" /> | <img width="360" alt="决策助手 Expo App 首页" src="public/screenshots/app-home.jpg" /> |
 
-| App 生成中 | App 报告页 |
-|---|---|
-| <img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" /> | <img width="1256" height="2808" alt="决策报告移动端顶部" src="https://github.com/user-attachments/assets/ca73d8b8-e73a-4915-a0a2-7b3163b1eb13" />
- |
+## 高光截图
+
+| 小羊拆解中 | 决策报告 | 决策记录 |
+|---|---|---|
+| <img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" /> | <img width="360" alt="决策报告顶部" src="public/screenshots/app-report-top.jpg" /> | <img width="360" alt="决策记录页面" src="public/screenshots/app-history.jpg" /> |
 
 <details>
-<summary>更多移动端截图和Web端截图</summary>
+<summary>更多截图</summary>
 
-<img width="360" alt="决策报告移动端完整长图" src="public/screenshots/app-report-long.jpg" />
+<img width="360" alt="决策报告完整长图" src="public/screenshots/app-report-long.jpg" />
 
-<img width="360" alt="决策记录移动端页面" src="public/screenshots/app-history.jpg" />
+<img width="1727" alt="整理纠结页 Web 端" src="https://github.com/user-attachments/assets/6365d1eb-b231-4254-8943-cf0cbb3da8ab" />
 
-<img width="1727" height="944" alt="整理纠结页Web端" src="https://github.com/user-attachments/assets/6365d1eb-b231-4254-8943-cf0cbb3da8ab" />
+<img width="1730" alt="个人总结页 Web 端" src="https://github.com/user-attachments/assets/eb4cf72e-8deb-4fc9-9fc6-debb06471583" />
 
-<img width="1730" height="2060" alt="个人总结页Web端" src="https://github.com/user-attachments/assets/eb4cf72e-8deb-4fc9-9fc6-debb06471583" />
+<img width="1730" alt="历史决策页 Web 端" src="https://github.com/user-attachments/assets/d6b6531d-ce2b-4d7a-8201-c03d1425a3c7" />
 
-<img width="1256" height="9210" alt="Web移动端首页" src="https://github.com/user-attachments/assets/5ca12539-6ac1-4885-9307-0f552a16a88e" />
-
+<img width="1730" alt="决策详情页 Web 端" src="https://github.com/user-attachments/assets/cd75a1c6-cd7a-437a-a88f-747f3a7ca829" />
 
 </details>
 
@@ -61,7 +61,7 @@ flowchart LR
 - DeepSeek key 只在服务端环境变量中出现。
 - Expo App 不直连 Neon，不保存 AI key，只调用同一套 `/api/*`。
 - Web 使用 cookie session；App 使用 Bearer token + SecureStore。
-- 匿名用户也能完整生成报告，登录后匿名数据 claim 到账号。
+- 匿名用户也能完整生成报告；登录后匿名数据 claim 到账号。
 
 ## 本地运行
 
