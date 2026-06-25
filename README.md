@@ -22,10 +22,6 @@
 
 <img width="1730" alt="个人总结页 Web 端" src="https://github.com/user-attachments/assets/eb4cf72e-8deb-4fc9-9fc6-debb06471583" />
 
-<img width="1730" alt="历史决策页 Web 端" src="https://github.com/user-attachments/assets/d6b6531d-ce2b-4d7a-8201-c03d1425a3c7" />
-
-<img width="1730" alt="决策详情页 Web 端" src="https://github.com/user-attachments/assets/cd75a1c6-cd7a-437a-a88f-747f3a7ca829" />
-
 </details>
 
 ## 技术栈
