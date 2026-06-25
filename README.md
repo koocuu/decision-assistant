@@ -8,20 +8,20 @@
 
 ## 高光截图
 
-| 首页 | 报告页 |
+| Web 首页 | App 首页 |
 |---|---|
-| <img width="1724" height="2042" alt="决策助手首页" src="https://github.com/user-attachments/assets/7ebfc21b-1411-4400-ba22-afa077cd1f5b" /> | <img width="1706" height="937" alt="决策报告页" src="https://github.com/user-attachments/assets/e5cdf525-927a-438b-b84a-8cf7936c136f" /> |
+| <img width="1724" height="2042" alt="决策助手 Web 首页" src="https://github.com/user-attachments/assets/7ebfc21b-1411-4400-ba22-afa077cd1f5b" /> | <img width="360" alt="决策助手 App 首页" src="public/screenshots/app-home.jpg" /> |
 
-| 生成中 | 跨端展示 |
+| App 生成中 | App 报告页 |
 |---|---|
-| <img width="1709" height="1877" alt="AI 生成中状态" src="https://github.com/user-attachments/assets/76746fb9-c9bb-44bd-ad09-62057895b3c6" /> | <img width="1699" height="933" alt="Web 与 App 跨端展示" src="https://github.com/user-attachments/assets/4629b041-e1e9-4ea6-b34e-d167a7d9a0ee" /> |
+| <img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" /> | <img width="360" alt="决策报告移动端顶部" src="public/screenshots/app-report-top.jpg" /> |
 
 <details>
-<summary>更多界面截图</summary>
+<summary>完整报告长图和更多移动端截图</summary>
 
-<img width="1736" height="3134" alt="移动端详情长图" src="https://github.com/user-attachments/assets/6257314c-4ec5-41cd-825a-8bc8a4d42d39" />
+<img width="360" alt="决策报告移动端完整长图" src="public/screenshots/app-report-long.jpg" />
 
-<img width="1707" height="2063" alt="账号与画像页面" src="https://github.com/user-attachments/assets/e30e57b2-49c6-4d12-9ee2-3e62cafc512f" />
+<img width="360" alt="决策记录移动端页面" src="public/screenshots/app-history.jpg" />
 
 </details>
 
@@ -109,4 +109,3 @@ npm run typecheck
 - App Store 上架
 - OG 大图、analytics、重测试体系
 - 大规模增长和商业化验证
-
