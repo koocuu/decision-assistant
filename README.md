@@ -11,19 +11,13 @@
 
 | PC Web | 移动 Web | Expo Android |
 |---|---|---|
-| <img width="1769" alt="决策助手 PC Web 首页" src="https://github.com/user-attachments/assets/34ed2a09-7a66-49a0-a9c7-da110c9b5d88" /> | <img width="360" alt="决策助手移动 Web 首页" src="https://github.com/user-attachments/assets/5ca12539-6ac1-4885-9307-0f552a16a88e" /> | <img width="360" alt="决策助手 Expo App 首页" src="public/screenshots/app-home.jpg" /> |
-
-## 高光截图
-
-| 小羊拆解中 | 决策报告 | 决策记录 |
-|---|---|---|
-| <img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" /> | <img width="360" alt="决策报告顶部" src="public/screenshots/app-report-top.jpg" /> | <img width="360" alt="决策记录页面" src="public/screenshots/app-history.jpg" /> |
+| <img width="1769" alt="决策助手 PC Web 首页" src="https://github.com/user-attachments/assets/34ed2a09-7a66-49a0-a9c7-da110c9b5d88" /> | <img width="1256" height="6687" alt="决策助手移动 Web 首页" src="https://github.com/user-attachments/assets/69bb5dc6-5cf3-4672-bb23-0d37fd5a9c60" /> | <img width="360" alt="决策助手 Expo App 首页" src="public/screenshots/app-home.jpg" /> |
 
 <details>
 <summary>更多截图</summary>
-
+<img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" />
 <img width="360" alt="决策报告完整长图" src="public/screenshots/app-report-long.jpg" />
-
+<img width="360" alt="决策记录页面" src="public/screenshots/app-history.jpg" />
 <img width="1727" alt="整理纠结页 Web 端" src="https://github.com/user-attachments/assets/6365d1eb-b231-4254-8943-cf0cbb3da8ab" />
 
 <img width="1730" alt="个人总结页 Web 端" src="https://github.com/user-attachments/assets/eb4cf72e-8deb-4fc9-9fc6-debb06471583" />
