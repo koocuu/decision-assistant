@@ -106,7 +106,7 @@ export default async function HomePage() {
               今天有什么纠结，说给我听？
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base">
-              不是替你做选择，而是帮你少内耗、少后悔。Web 可直接体验，也提供 Expo Android 版展示跨端能力。
+              不是替你做选择，而是帮你把纠结拆清楚、把行动变具体，并在复盘中沉淀自己的决策模式。
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -133,9 +133,10 @@ export default async function HomePage() {
             <Sheep size={84} mood="idle" float className="hidden sm:block" />
           </div>
         </div>
+        <div className="mt-6 border-t pt-5 sm:mt-7 sm:pt-6">
+          <AppDownloadCard variant="inline" />
+        </div>
       </section>
-
-      <AppDownloadCard />
 
       <section className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4">
         {stats.map((stat) => (
