@@ -3,9 +3,16 @@
 一个带“小羊暖外壳”的 AI 决策工具：用户随手写下纠结，系统把它拆成选项、风险、低后悔行动，并在事后复盘沉淀个人决策画像。
 
 当前定位：作品集 / 简历展示 / 给朋友体验。重点不是重押增长，而是展示一个完整、可上线、可跨端复用的 AI 产品闭环。
+<img width="1724" height="2042" alt="image" src="https://github.com/user-attachments/assets/7ebfc21b-1411-4400-ba22-afa077cd1f5b" />
+<img width="1706" height="937" alt="image" src="https://github.com/user-attachments/assets/e5cdf525-927a-438b-b84a-8cf7936c136f" />
+<img width="1709" height="1877" alt="image" src="https://github.com/user-attachments/assets/76746fb9-c9bb-44bd-ad09-62057895b3c6" />
+<img width="1699" height="933" alt="image" src="https://github.com/user-attachments/assets/4629b041-e1e9-4ea6-b34e-d167a7d9a0ee" />
+<img width="1736" height="3134" alt="image" src="https://github.com/user-attachments/assets/6257314c-4ec5-41cd-825a-8bc8a4d42d39" />
+<img width="1707" height="2063" alt="image" src="https://github.com/user-attachments/assets/e30e57b2-49c6-4d12-9ee2-3e62cafc512f" />
+
 
 ## 在线体验
-
+- https://decision.koocuu.com/
 - Web：部署在 Vercel，承载 PC Web、移动 Web、账号体系和 AI API。
 - Android App：网页首页提供 APK 下载入口和二维码，指向 `/api/download/android`。
 
