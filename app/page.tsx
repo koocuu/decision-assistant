@@ -97,7 +97,7 @@ export default async function HomePage() {
     <div className="space-y-6 sm:space-y-8">
       <section className="relative overflow-hidden rounded-2xl border bg-card p-5 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-8">
         <span className="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_132px_280px] lg:items-center lg:gap-8">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-center lg:gap-10">
           <div className="min-w-0 sm:max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">
               低后悔决策 · 个人决策控制台
@@ -126,9 +126,23 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <AppDownloadCard variant="inline" />
+          <div className="flex justify-center lg:justify-end">
+            <div className="relative flex h-32 w-32 items-center justify-center sm:h-40 sm:w-40 lg:h-48 lg:w-48">
+              <span className="absolute inset-0 rounded-full bg-primary/10 blur-2xl" aria-hidden="true" />
+              <span
+                className="absolute h-24 w-24 rounded-3xl shadow-[0_18px_50px_-30px_rgba(20,86,216,0.55)] sm:h-32 sm:w-32 lg:h-40 lg:w-40"
+                style={{ background: "var(--warm-soft)" }}
+                aria-hidden="true"
+              />
+              <Sheep size={88} mood="idle" float className="relative sm:hidden" />
+              <Sheep size={112} mood="idle" float className="relative hidden sm:block lg:hidden" />
+              <Sheep size={136} mood="idle" float className="relative hidden lg:block" />
+            </div>
+          </div>
         </div>
       </section>
+
+      <AppDownloadCard />
 
       <section className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4">
         {stats.map((stat) => (

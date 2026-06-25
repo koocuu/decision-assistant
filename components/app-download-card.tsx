@@ -68,7 +68,7 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
             href={downloadPath}
           >
             <Download className="h-4 w-4" aria-hidden="true" />
-            下载 Android APK
+            点我下载 Android APK
           </a>
           <a
             className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border bg-card px-5 text-sm font-medium transition hover:bg-accent active:scale-[0.98] sm:w-fit"
@@ -85,7 +85,7 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
         <img alt="Android App 下载二维码" className="h-[168px] w-[168px]" src={qrUrl} />
         <div className="mt-2 flex items-center justify-center gap-1 text-xs text-muted-foreground">
           <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
-          手机扫码下载
+          手机扫码下载，或
         </div>
       </div>
     </div>
