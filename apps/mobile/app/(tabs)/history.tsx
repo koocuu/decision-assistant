@@ -104,7 +104,7 @@ export default function HistoryScreen() {
         ) : (
           <View style={styles.emptyWrap}>
             <View style={styles.emptySheep}>
-              <Sheep size={64} mood="idle" />
+              <Sheep size={64} mood="happy" animate />
             </View>
             <AppText variant="title" color={colors.textPrimary} align="center">
               暂无历史记录

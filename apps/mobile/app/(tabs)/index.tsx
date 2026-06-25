@@ -189,7 +189,7 @@ export default function DashboardScreen() {
           ) : (
             <View style={styles.emptyHistory}>
               <View style={styles.emptySheep}>
-                <Sheep size={56} mood="idle" />
+                <Sheep size={56} mood="happy" animate />
               </View>
               <AppText variant="meta" color={colors.textSecondary}>
                 还没有决策记录

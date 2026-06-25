@@ -17,6 +17,7 @@ import {
   SectionHeader,
   Tag
 } from "../src/components/Primitives";
+import { Sheep } from "../src/components/Sheep";
 import { normalizeReportAnalysis } from "../src/services/normalizeReportAnalysis";
 import { fetchDecisionReport, submitDecisionReview } from "../src/services/api";
 import { findReport, updateReportReview } from "../src/storage/history";
@@ -85,6 +86,7 @@ export default function ResultScreen() {
   const [outcome, setOutcome] = useState<DecisionReview["outcome"]>("unknown");
   const [note, setNote] = useState("");
   const [savingReview, setSavingReview] = useState(false);
+  const [reviewCelebrated, setReviewCelebrated] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,6 +106,15 @@ export default function ResultScreen() {
       cancelled = true;
     };
   }, [params.id]);
+
+  useEffect(() => {
+    if (!reviewCelebrated) {
+      return;
+    }
+
+    const timer = setTimeout(() => setReviewCelebrated(false), 1800);
+    return () => clearTimeout(timer);
+  }, [reviewCelebrated]);
 
   function openReviewModal() {
     const review = report?.review;
@@ -135,6 +146,7 @@ export default function ResultScreen() {
         setReport({ ...report, review, reviewStatus: "reviewed" });
       }
       setReviewOpen(false);
+      setReviewCelebrated(true);
     } catch {
       Alert.alert("保存失败", "复盘记录暂时没有保存成功，请稍后再试。");
     } finally {
@@ -271,6 +283,13 @@ export default function ResultScreen() {
         onCancel={() => setReviewOpen(false)}
         onSave={saveReview}
       />
+
+      {reviewCelebrated ? (
+        <View pointerEvents="none" style={styles.celebrateToast}>
+          <Sheep size={46} mood="celebrate" animate />
+          <Text style={styles.celebrateToastText}>复盘已保存</Text>
+        </View>
+      ) : null}
     </Screen>
   );
 }
@@ -673,5 +692,29 @@ const styles = StyleSheet.create({
   },
   modalActions: {
     gap: spacing.md
+  },
+  celebrateToast: {
+    alignItems: "center",
+    alignSelf: "center",
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    borderWidth: hairlineWidth,
+    flexDirection: "row",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    position: "absolute",
+    top: spacing.xl,
+    shadowColor: colors.textPrimary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    elevation: 3
+  },
+  celebrateToastText: {
+    color: colors.textPrimary,
+    fontSize: 13,
+    fontWeight: "600"
   }
 });
