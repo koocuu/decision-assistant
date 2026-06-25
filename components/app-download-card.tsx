@@ -15,14 +15,14 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
   if (variant === "inline") {
     return (
       <div className="w-full min-w-0">
-        <div className="hidden flex-col items-center gap-3 sm:flex">
+        <div className="hidden flex-col items-center sm:flex">
           <div className="rounded-xl border bg-background p-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="Android App 下载二维码" className="h-[132px] w-[132px]" src={qrUrl} />
           </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="mt-3 flex items-center gap-1 text-sm text-muted-foreground">
             <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
-            手机扫码下载
+            手机扫码下载，或
           </div>
         </div>
         <a
@@ -30,7 +30,7 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
           href={downloadPath}
         >
           <Download className="h-4 w-4" aria-hidden="true" />
-          下载 Android APK
+          点我下载 Android APK
         </a>
       </div>
     );

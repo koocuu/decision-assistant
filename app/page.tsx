@@ -95,51 +95,52 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <section className="rounded-3xl bg-accent/40 p-3 sm:p-4">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-stretch">
-          <div className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-8 lg:min-h-[360px]">
-            <span className="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
-            <div className="flex h-full min-w-0 flex-col justify-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-                低后悔决策 · 个人决策控制台
-              </p>
-              <h1 className="mt-3 text-2xl font-semibold tracking-normal sm:text-4xl">
-                今天有什么纠结，说给我听？
-              </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base">
-                不是替你做选择，而是帮你把纠结拆清楚、把行动变具体，并在复盘中沉淀自己的决策模式。
-              </p>
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/decisions/new"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98] sm:h-11 sm:w-fit"
-                >
-                  <Plus className="h-4 w-4" aria-hidden="true" />
-                  整理一次纠结
-                </Link>
-                <Link
-                  href="/decisions"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border bg-card px-5 text-sm font-medium transition hover:bg-accent active:scale-[0.98] sm:h-11 sm:w-fit"
-                >
-                  <Layers3 className="h-4 w-4" aria-hidden="true" />
-                  查看记录
-                </Link>
-              </div>
+      <section className="relative overflow-hidden rounded-2xl border bg-card p-5 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-8">
+        <span className="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_250px_116px] lg:items-center lg:gap-8">
+          <div className="min-w-0 sm:max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              低后悔决策 · 个人决策控制台
+            </p>
+            <h1 className="mt-3 text-2xl font-semibold tracking-normal sm:text-4xl">
+              今天有什么纠结，说给我听？
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base">
+              不是替你做选择，而是帮你把纠结拆清楚、把行动变具体，并在复盘中沉淀自己的决策模式。
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/decisions/new"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 active:scale-[0.98] sm:h-11 sm:w-fit"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                整理一次纠结
+              </Link>
+              <Link
+                href="/decisions"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border bg-card px-5 text-sm font-medium transition hover:bg-accent active:scale-[0.98] sm:h-11 sm:w-fit"
+              >
+                <Layers3 className="h-4 w-4" aria-hidden="true" />
+                查看记录
+              </Link>
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-col items-center justify-center gap-4 rounded-2xl border bg-card p-5 text-center shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-6">
+          <AppDownloadCard variant="inline" />
+
+          <div
+            className="hidden h-[116px] w-[116px] shrink-0 items-center justify-center rounded-3xl lg:flex"
+            style={{ background: "var(--warm-soft)" }}
+          >
+            <Sheep size={88} mood="idle" float />
+          </div>
+          <div className="flex justify-center lg:hidden">
             <div
-              className="flex h-[104px] w-[104px] shrink-0 items-center justify-center rounded-3xl"
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl"
               style={{ background: "var(--warm-soft)" }}
             >
-              <Sheep size={82} mood="idle" float />
+              <Sheep size={50} mood="idle" float />
             </div>
-            <div className="w-full text-center">
-              <p className="text-sm font-semibold">把小羊装进手机</p>
-              <p className="mt-1 text-xs leading-5 text-muted-foreground">扫码安装 Android 体验版</p>
-            </div>
-            <AppDownloadCard variant="inline" />
           </div>
         </div>
       </section>
