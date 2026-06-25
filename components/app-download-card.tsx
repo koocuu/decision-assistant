@@ -15,7 +15,13 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
   if (variant === "inline") {
     return (
       <div className="w-full min-w-0 text-center">
-        <div className="mb-3">
+        <div className="mb-3 flex flex-col items-center">
+          <div
+            className="mb-2 flex h-14 w-14 items-center justify-center rounded-2xl"
+            style={{ background: "var(--warm-soft)" }}
+          >
+            <Sheep size={44} mood="happy" float />
+          </div>
           <p className="text-base font-semibold tracking-normal">把小羊装进手机</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">Android 体验版，同步账号和历史记录</p>
         </div>

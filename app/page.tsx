@@ -126,23 +126,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div
-            className="hidden h-[132px] w-[132px] shrink-0 items-center justify-center rounded-3xl lg:flex"
-            style={{ background: "var(--warm-soft)" }}
-          >
-            <Sheep size={98} mood="idle" float />
-          </div>
-
           <AppDownloadCard variant="inline" />
-
-          <div className="flex justify-center lg:hidden">
-            <div
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl"
-              style={{ background: "var(--warm-soft)" }}
-            >
-              <Sheep size={50} mood="idle" float />
-            </div>
-          </div>
         </div>
       </section>
 
