@@ -1,4 +1,4 @@
-# 决策助手 Decision Assistant
+<img width="1730" height="2060" alt="image" src="https://github.com/user-attachments/assets/d6b6531d-ce2b-4d7a-8201-c03d1425a3c7" /><img width="1730" height="2060" alt="image" src="https://github.com/user-attachments/assets/cd75a1c6-cd7a-437a-a88f-747f3a7ca829" /># 决策助手 Decision Assistant
 
 一个带“小羊暖外壳”的 AI 决策工具：用户随手写下纠结，系统把它拆成选项、风险、低后悔行动，并在事后复盘沉淀个人决策画像。
 
@@ -11,18 +11,26 @@
 
 | Web 首页 | App 首页 |
 |---|---|
-| <img width="1724" height="2042" alt="决策助手 Web 首页" src="https://github.com/user-attachments/assets/7ebfc21b-1411-4400-ba22-afa077cd1f5b" /> | <img width="360" alt="决策助手 App 首页" src="public/screenshots/app-home.jpg" /> |
+| <img width="1769" height="2322" alt="决策助手 Web 首页" src="https://github.com/user-attachments/assets/34ed2a09-7a66-49a0-a9c7-da110c9b5d88" /> | <img width="360" alt="决策助手 App 首页" src="public/screenshots/app-home.jpg" /> |
 
 | App 生成中 | App 报告页 |
 |---|---|
-| <img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" /> | <img width="360" alt="决策报告移动端顶部" src="public/screenshots/app-report-top.jpg" /> |
+| <img width="360" alt="小羊正在拆解决策" src="public/screenshots/app-generating.jpg" /> | <img width="1256" height="2808" alt="决策报告移动端顶部" src="https://github.com/user-attachments/assets/ca73d8b8-e73a-4915-a0a2-7b3163b1eb13" />
+ |
 
 <details>
-<summary>完整报告长图和更多移动端截图</summary>
+<summary>更多移动端截图和Web端截图</summary>
 
 <img width="360" alt="决策报告移动端完整长图" src="public/screenshots/app-report-long.jpg" />
 
 <img width="360" alt="决策记录移动端页面" src="public/screenshots/app-history.jpg" />
+
+<img width="1727" height="944" alt="整理纠结页Web端" src="https://github.com/user-attachments/assets/6365d1eb-b231-4254-8943-cf0cbb3da8ab" />
+
+<img width="1730" height="2060" alt="个人总结页Web端" src="https://github.com/user-attachments/assets/eb4cf72e-8deb-4fc9-9fc6-debb06471583" />
+
+<img width="1256" height="9210" alt="Web移动端首页" src="https://github.com/user-attachments/assets/5ca12539-6ac1-4885-9307-0f552a16a88e" />
+
 
 </details>
 
