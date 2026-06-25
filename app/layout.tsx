@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   applicationName: "决策助手",
   title: "决策助手 · Decision Assistant",
   description: "不是替你做选择，而是帮你把纠结收敛成一个低后悔行动。",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icons/favicon-64.png", sizes: "64x64", type: "image/png" }
+    ]
+  },
   formatDetection: {
     telephone: false
   }
