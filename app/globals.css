@@ -85,7 +85,7 @@ body {
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   overscroll-behavior-y: none;
 }
 
@@ -101,7 +101,7 @@ textarea {
   font-feature-settings: "tnum";
 }
 
-/* 小羊呼吸式浮动（与移动端一致的陪伴感） */
+/* 小羊克制动效（与移动端一致的陪伴感） */
 @keyframes sheep-float {
   0%,
   100% {
@@ -114,25 +114,121 @@ textarea {
 .sheep-float {
   animation: sheep-float 2.4s ease-in-out infinite;
 }
-@media (prefers-reduced-motion: reduce) {
-  .sheep-float {
-    animation: none;
+
+@keyframes sheep-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
   }
+  94% {
+    transform: scaleY(0.1);
+  }
+  96% {
+    transform: scaleY(1);
+  }
+}
+
+.sheep-can-blink .sheep-eyes {
+  animation: sheep-blink 5.8s ease-in-out infinite;
+}
+
+@keyframes sheep-thinking-dot {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.28);
+  }
+}
+
+.sheep-thinking-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sheep-thinking-dot 1.1s ease-in-out infinite;
+}
+
+@keyframes sheep-celebrate {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-6px) scale(1.06);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.sheep-celebrate {
+  animation: sheep-celebrate 450ms ease-out both;
+}
+
+@keyframes sheep-sparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.sheep-sparkles {
+  animation: sheep-sparkle 700ms ease-out both;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-in {
+  animation: card-in 150ms ease-out both;
+}
+
+.card-in-delay-1 {
+  animation-delay: 45ms;
+}
+
+.card-in-delay-2 {
+  animation-delay: 90ms;
+}
+
+.card-in-delay-3 {
+  animation-delay: 135ms;
 }
 
 ::selection {
   background: color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
-@media (display-mode: standalone) {
-  body {
-    user-select: none;
-    -webkit-user-select: none;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
   }
 
-  input,
-  textarea {
-    user-select: text;
-    -webkit-user-select: text;
+  .sheep-float,
+  .sheep-can-blink .sheep-eyes,
+  .sheep-thinking-dot,
+  .sheep-celebrate,
+  .sheep-sparkles,
+  .card-in {
+    animation: none !important;
   }
 }

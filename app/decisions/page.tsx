@@ -159,7 +159,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
         <div className="grid gap-4">
           {decisions.map((decision) => (
             <Link key={decision.id} className="block" href={`/decisions/${decision.id}`}>
-              <Card className="transition hover:border-primary/50 hover:shadow-md">
+              <Card className="card-in transition hover:border-primary/50 hover:shadow-md">
                 <CardHeader className="p-5 sm:p-6">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
@@ -201,7 +201,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
               className="flex items-center justify-center rounded-3xl"
               style={{ width: 76, height: 76, background: "var(--warm-soft)" }}
             >
-              <Sheep size={60} />
+              <Sheep size={60} mood="happy" float />
             </div>
             <p className="mt-3 text-sm text-muted-foreground">
               {selectedCategory || selectedStatus ? "当前筛选条件下没有决策。" : "还没有保存的决策，写下第一个纠结吧。"}

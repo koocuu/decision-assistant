@@ -12,7 +12,7 @@ export async function AppDownloadCard() {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=168x168&margin=10&data=${encodeURIComponent(downloadUrl)}`;
 
   return (
-    <section className="rounded-2xl border bg-card p-5 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-6">
+    <section className="card-in rounded-2xl border bg-card p-5 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-6">
       <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
@@ -20,11 +20,11 @@ export async function AppDownloadCard() {
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
               style={{ background: "var(--warm-soft)" }}
             >
-              <Sheep size={38} />
+              <Sheep size={38} mood="happy" float />
             </div>
             <div>
-              <h2 className="text-lg font-semibold tracking-normal">下载 Android App</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Expo 原生版，手机扫码安装。</p>
+              <h2 className="text-lg font-semibold tracking-normal">Android App 展示版</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Expo 原生端，同一套账号和 AI 后端。扫码下载 APK。</p>
             </div>
           </div>
 
@@ -43,6 +43,9 @@ export async function AppDownloadCard() {
               打开下载链接
             </a>
           </div>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            作品展示用安装包；如下载地址未配置，按钮会返回提示。
+          </p>
         </div>
 
         <div className="hidden rounded-xl border bg-background p-3 md:block">

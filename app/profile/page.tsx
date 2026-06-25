@@ -103,7 +103,7 @@ export default async function ProfilePage() {
               className="flex items-center justify-center rounded-3xl"
               style={{ width: 76, height: 76, background: "var(--warm-soft)" }}
             >
-              <Sheep size={60} />
+              <Sheep size={60} mood="happy" float />
             </div>
             <p className="mt-3 text-sm text-muted-foreground">
               完成几次决策复盘后，小羊会逐渐总结你的决策模式。

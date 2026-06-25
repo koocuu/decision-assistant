@@ -17,7 +17,7 @@ export function MobileTabNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+14px)] z-40 rounded-2xl border bg-card/96 px-2 py-2 shadow-[0_12px_36px_-18px_rgba(11,14,20,0.38)] backdrop-blur md:hidden">
+    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+14px)] z-40 rounded-2xl border bg-card/96 px-2 py-2 shadow-[0_12px_36px_-18px_rgba(11,14,20,0.38)] backdrop-blur sm:hidden">
       <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
         {items.map((item) => {
           const Icon = icons[item.href as keyof typeof icons] ?? Home;

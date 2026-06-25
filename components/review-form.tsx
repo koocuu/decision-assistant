@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Sheep } from "@/components/sheep";
 import { Button } from "@/components/ui/button";
 
 type ReviewFormProps = {
@@ -28,6 +29,7 @@ export function ReviewForm({ decisionId }: ReviewFormProps) {
   const [lesson, setLesson] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,7 +69,10 @@ export function ReviewForm({ decisionId }: ReviewFormProps) {
         throw new Error(data.error || "提交复盘失败，请稍后再试。");
       }
 
-      router.refresh();
+      setSubmitted(true);
+      window.setTimeout(() => {
+        router.refresh();
+      }, 650);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "提交复盘失败，请稍后再试。");
     } finally {
@@ -80,6 +85,18 @@ export function ReviewForm({ decisionId }: ReviewFormProps) {
       <Button className="w-full" type="button" onClick={() => setIsOpen(true)}>
         完成并复盘
       </Button>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div className="rounded-xl border bg-card p-4 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl" style={{ background: "var(--warm-soft)" }}>
+          <Sheep size={48} mood="celebrate" />
+        </div>
+        <p className="mt-3 text-sm font-medium">复盘已保存</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">小羊会把这次反馈记进你的决策画像。</p>
+      </div>
     );
   }
 

@@ -5,6 +5,7 @@ import { AnalyzeDecisionButton } from "@/components/analyze-decision-button";
 import { FinalChoiceForm } from "@/components/final-choice-form";
 import { PageHeader } from "@/components/page-header";
 import { ReviewForm, reviewMessage } from "@/components/review-form";
+import { Sheep } from "@/components/sheep";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { parseStoredAiAnalysis } from "@/lib/ai-analysis";
 import { db } from "@/lib/db";
@@ -188,8 +189,14 @@ export default async function DecisionDetailPage({ params }: { params: Promise<{
             <CardContent>
               {aiAnalysis ? (
                 <div className="space-y-6">
-                  <section className="rounded-lg border border-primary/40 bg-accent p-5">
-                    <p className="text-sm font-medium text-primary">推荐选择</p>
+                  <section className="card-in relative overflow-hidden rounded-lg border border-primary/40 bg-accent p-5">
+                    <div
+                      className="absolute right-4 top-4 hidden h-14 w-14 items-center justify-center rounded-2xl sm:flex"
+                      style={{ background: "var(--warm-soft)" }}
+                    >
+                      <Sheep size={42} mood="celebrate" />
+                    </div>
+                    <p className="pr-0 text-sm font-medium text-primary sm:pr-16">推荐选择</p>
                     <h3 className="mt-2 text-2xl font-semibold">
                       {aiAnalysis.recommendationTitle ||
                         recommendedOption?.label ||
@@ -223,11 +230,11 @@ export default async function DecisionDetailPage({ params }: { params: Promise<{
                   </section>
 
                   <section className="grid gap-3 md:grid-cols-3">
-                    <div className="rounded-md border p-4">
+                    <div className="card-in card-in-delay-1 rounded-md border p-4">
                       <h3 className="text-sm font-medium">真实问题</h3>
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">{aiAnalysis.realProblem || "未判断"}</p>
                     </div>
-                    <div className="rounded-md border p-4">
+                    <div className="card-in card-in-delay-2 rounded-md border p-4">
                       <h3 className="text-sm font-medium">情绪干扰</h3>
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">
                         {aiAnalysis.emotionalFactors.length
@@ -235,7 +242,7 @@ export default async function DecisionDetailPage({ params }: { params: Promise<{
                           : "未判断"}
                       </p>
                     </div>
-                    <div className="rounded-md border p-4">
+                    <div className="card-in card-in-delay-3 rounded-md border p-4">
                       <h3 className="text-sm font-medium">可逆性判断</h3>
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">{aiAnalysis.reversibility || "未判断"}</p>
                     </div>

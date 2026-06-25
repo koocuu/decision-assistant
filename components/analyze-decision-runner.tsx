@@ -48,7 +48,7 @@ export function AnalyzeDecisionRunner({ decisionId }: { decisionId: string }) {
       <div className="relative flex h-32 w-32 items-center justify-center rounded-[2rem]" style={{ background: "var(--warm-soft)" }}>
         <div className="absolute inset-3 rounded-[1.5rem] border border-primary/20" />
         <div className="absolute h-28 w-28 animate-spin rounded-full border-2 border-transparent border-t-primary/70" />
-        <Sheep size={84} float />
+        <Sheep size={84} mood="thinking" float />
       </div>
       <h1 className="mt-6 text-2xl font-semibold tracking-normal">小羊正在拆解你的纠结</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">

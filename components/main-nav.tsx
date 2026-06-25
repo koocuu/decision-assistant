@@ -9,7 +9,7 @@ export function MainNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="hidden items-center gap-1 overflow-x-auto md:flex">
+    <nav className="hidden items-center gap-1 overflow-x-auto sm:flex">
       {items.map((item) => {
         const active = isNavItemActive(pathname, item.href);
 

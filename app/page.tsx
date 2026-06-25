@@ -106,7 +106,7 @@ export default async function HomePage() {
               今天有什么纠结，说给我听？
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base">
-              不是替你做选择，而是帮你少内耗、少后悔。现在也可以添加到主屏，像 App 一样打开。
+              不是替你做选择，而是帮你少内耗、少后悔。Web 可直接体验，也提供 Expo Android 版展示跨端能力。
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -129,8 +129,8 @@ export default async function HomePage() {
             className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl sm:h-[108px] sm:w-[108px]"
             style={{ background: "var(--warm-soft)" }}
           >
-            <Sheep size={68} float className="sm:hidden" />
-            <Sheep size={84} float className="hidden sm:block" />
+            <Sheep size={68} mood="idle" float className="sm:hidden" />
+            <Sheep size={84} mood="idle" float className="hidden sm:block" />
           </div>
         </div>
       </section>
@@ -139,7 +139,7 @@ export default async function HomePage() {
 
       <section className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4">
         {stats.map((stat) => (
-          <Card key={stat.label} className={stat.label === "平均后悔分" ? "hidden sm:block" : ""}>
+          <Card key={stat.label} className={stat.label === "平均后悔分" ? "hidden sm:block card-in" : "card-in"}>
             <div className="flex min-h-24 flex-col justify-center gap-2 p-4 sm:p-5">
               <span className="text-[11px] font-medium tracking-wide text-muted-foreground sm:text-xs">
                 {stat.label}
@@ -201,7 +201,7 @@ export default async function HomePage() {
                   className="flex items-center justify-center rounded-3xl"
                   style={{ width: 76, height: 76, background: "var(--warm-soft)" }}
                 >
-                  <Sheep size={60} />
+                  <Sheep size={60} mood="happy" float />
                 </div>
                 <p className="mt-3 text-sm font-medium">还没有决策记录</p>
                 <p className="mt-1 text-sm text-muted-foreground">写下第一个纠结，小羊帮你理</p>
