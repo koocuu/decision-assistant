@@ -97,7 +97,7 @@ export default async function HomePage() {
     <div className="space-y-6 sm:space-y-8">
       <section className="relative overflow-hidden rounded-2xl border bg-card p-5 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-8">
         <span className="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
-        <div className="flex items-center justify-between gap-4 sm:gap-6">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-center lg:gap-8">
           <div className="min-w-0 flex-1 sm:max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">
               低后悔决策 · 个人决策控制台
@@ -125,15 +125,34 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div
-            className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl sm:h-[108px] sm:w-[108px]"
-            style={{ background: "var(--warm-soft)" }}
-          >
-            <Sheep size={68} mood="idle" float className="sm:hidden" />
-            <Sheep size={84} mood="idle" float className="hidden sm:block" />
+
+          <div className="hidden min-w-0 flex-col items-center gap-4 rounded-2xl border bg-background/70 p-4 shadow-[0_1px_2px_rgba(11,14,20,0.03)] lg:flex">
+            <div
+              className="flex h-[104px] w-[104px] shrink-0 items-center justify-center rounded-3xl"
+              style={{ background: "var(--warm-soft)" }}
+            >
+              <Sheep size={82} mood="idle" float />
+            </div>
+            <div className="w-full text-center">
+              <p className="text-sm font-semibold">把小羊装进手机</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">扫码安装 Android 体验版</p>
+            </div>
+            <AppDownloadCard variant="inline" />
           </div>
         </div>
-        <div className="mt-6 border-t pt-5 sm:mt-7 sm:pt-6">
+        <div className="mt-5 rounded-2xl border bg-background/70 p-4 lg:hidden">
+          <div className="mb-3 flex items-center gap-3">
+            <div
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
+              style={{ background: "var(--warm-soft)" }}
+            >
+              <Sheep size={38} mood="idle" float />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">把小羊装进手机</p>
+              <p className="text-xs leading-5 text-muted-foreground">Android 体验版，同步账号和历史记录</p>
+            </div>
+          </div>
           <AppDownloadCard variant="inline" />
         </div>
       </section>
