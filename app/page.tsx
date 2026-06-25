@@ -97,7 +97,7 @@ export default async function HomePage() {
     <div className="space-y-6 sm:space-y-8">
       <section className="relative overflow-hidden rounded-2xl border bg-card p-5 shadow-[0_1px_2px_rgba(11,14,20,0.03),0_8px_24px_-12px_rgba(11,14,20,0.08)] sm:p-8">
         <span className="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_250px_116px] lg:items-center lg:gap-8">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_132px_280px] lg:items-center lg:gap-8">
           <div className="min-w-0 sm:max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">
               低后悔决策 · 个人决策控制台
@@ -126,14 +126,15 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <AppDownloadCard variant="inline" />
-
           <div
-            className="hidden h-[116px] w-[116px] shrink-0 items-center justify-center rounded-3xl lg:flex"
+            className="hidden h-[132px] w-[132px] shrink-0 items-center justify-center rounded-3xl lg:flex"
             style={{ background: "var(--warm-soft)" }}
           >
-            <Sheep size={88} mood="idle" float />
+            <Sheep size={98} mood="idle" float />
           </div>
+
+          <AppDownloadCard variant="inline" />
+
           <div className="flex justify-center lg:hidden">
             <div
               className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl"
