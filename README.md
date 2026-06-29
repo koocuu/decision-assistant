@@ -33,6 +33,14 @@
 - 账号：邮箱密码登录、httpOnly cookie、App Bearer token、匿名 `anonId`
 - 部署：Vercel
 
+## 工程亮点
+
+- 账号与数据隔离：支持邮箱密码登录、匿名使用、登录后 claim 匿名数据，Web/App 共用同一套账号 API。
+- 跨端架构：Next 承载 Web、账号、AI 代理和数据库访问；Expo App 只调用 `/api/*`，不直连 Neon 或 DeepSeek。
+- 性能收口：首屏数据库查询并行化，首页/画像/历史页只查询展示字段，历史列表分页，避免记录变多后全量拉取。
+- 稳定性处理：DeepSeek 请求增加超时，列表 API 限制单次响应体积，APK 下载跳转加短缓存。
+- 作品体验：PC Web、移动 Web、Expo Android 保持同一产品闭环，同时保留各端适合自己的交互形态。
+
 ## 架构简图
 
 ```mermaid
@@ -102,6 +110,7 @@ npm run typecheck
 - Expo App 账号同步与服务端历史读取
 - Web/移动端小羊四态角色系统
 - Android APK 下载入口
+- 首页、历史页、AI 请求链路的高边际性能优化
 
 暂不做：
 
