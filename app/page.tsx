@@ -24,7 +24,14 @@ export default async function HomePage() {
   const identity = await resolveIdentity();
   const decisionWhere = decisionOwnerWhere(identity);
   const profileWhere = profileOwnerWhere(identity);
-  const [totalDecisions, reviewedDecisions, pendingReviews, regretAggregate, recentDecisions, profile] =
+  const pendingReviewWhere = {
+    ...decisionWhere,
+    aiAnalysis: {
+      not: null
+    },
+    review: null
+  };
+  const [totalDecisions, reviewedDecisions, pendingReviews, regretAggregate, recentDecisions, pendingReviewList, profile] =
     await Promise.all([
       db.decision.count({
         where: decisionWhere
@@ -36,13 +43,7 @@ export default async function HomePage() {
         }
       }),
       db.decision.count({
-        where: {
-          ...decisionWhere,
-          aiAnalysis: {
-            not: null
-          },
-          review: null
-        }
+        where: pendingReviewWhere
       }),
       db.decisionReview.aggregate({
         where: identity.kind === "user" ? { userId: identity.userId } : { anonId: identity.anonId },
@@ -56,7 +57,12 @@ export default async function HomePage() {
         orderBy: {
           createdAt: "desc"
         },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          status: true,
+          createdAt: true,
           review: {
             select: {
               regretScore: true
@@ -64,27 +70,29 @@ export default async function HomePage() {
           }
         }
       }),
+      db.decision.findMany({
+        where: pendingReviewWhere,
+        take: 5,
+        orderBy: {
+          updatedAt: "desc"
+        },
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          updatedAt: true
+        }
+      }),
       db.userProfile.findFirst({
         where: profileWhere,
         orderBy: {
           updatedAt: "desc"
+        },
+        select: {
+          summary: true
         }
       })
     ]);
-
-  const pendingReviewList = await db.decision.findMany({
-    where: {
-      ...decisionWhere,
-      aiAnalysis: {
-        not: null
-      },
-      review: null
-    },
-    take: 5,
-    orderBy: {
-      updatedAt: "desc"
-    }
-  });
 
   const stats = [
     { label: "总决策数", value: String(totalDecisions) },

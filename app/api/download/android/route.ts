@@ -10,5 +10,7 @@ export async function GET() {
     );
   }
 
-  return NextResponse.redirect(apkUrl);
+  const response = NextResponse.redirect(apkUrl);
+  response.headers.set("Cache-Control", "public, max-age=300, s-maxage=300");
+  return response;
 }

@@ -10,10 +10,12 @@ import { decisionOwnerWhere, resolveIdentity } from "@/lib/identity";
 import type { DecisionStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+const PAGE_SIZE = 12;
 
 type DecisionsPageProps = {
   searchParams?: Promise<{
     category?: string;
+    page?: string;
     status?: string;
   }>;
 };
@@ -33,7 +35,12 @@ function formatDate(date: Date) {
   }).format(date);
 }
 
-function buildFilterHref(category?: string, status?: string) {
+function parsePage(value?: string) {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
+function buildFilterHref(category?: string, status?: string, page?: number) {
   const params = new URLSearchParams();
 
   if (category) {
@@ -42,6 +49,10 @@ function buildFilterHref(category?: string, status?: string) {
 
   if (status) {
     params.set("status", status);
+  }
+
+  if (page && page > 1) {
+    params.set("page", String(page));
   }
 
   const query = params.toString();
@@ -59,6 +70,7 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
     resolvedSearchParams.status && (decisionStatuses as readonly string[]).includes(resolvedSearchParams.status)
       ? (resolvedSearchParams.status as DecisionStatus)
       : "";
+  const currentPage = parsePage(resolvedSearchParams.page);
   const where: DecisionWhere = decisionOwnerWhere(await resolveIdentity()) as DecisionWhere;
 
   if (selectedCategory) {
@@ -69,20 +81,33 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
     where.status = selectedStatus;
   }
 
-  const decisions = await db.decision.findMany({
-    where,
-    include: {
-      review: {
-        select: {
-          regretScore: true,
-          reviewedAt: true
+  const [decisionCount, decisions] = await Promise.all([
+    db.decision.count({ where }),
+    db.decision.findMany({
+      where,
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        status: true,
+        finalChoice: true,
+        createdAt: true,
+        review: {
+          select: {
+            regretScore: true
+          }
         }
+      },
+      orderBy: {
+        createdAt: "desc"
       }
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
+    })
+  ]);
+  const totalPages = Math.max(1, Math.ceil(decisionCount / PAGE_SIZE));
+  const firstItemNumber = decisionCount === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+  const lastItemNumber = Math.min(currentPage * PAGE_SIZE, decisionCount);
 
   return (
     <div>
@@ -156,44 +181,79 @@ export default async function DecisionsPage({ searchParams }: DecisionsPageProps
       </Card>
 
       {decisions.length > 0 ? (
-        <div className="grid gap-4">
-          {decisions.map((decision) => (
-            <Link key={decision.id} className="block" href={`/decisions/${decision.id}`}>
-              <Card className="card-in transition hover:border-primary/50 hover:shadow-md">
-                <CardHeader className="p-5 sm:p-6">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                    <div>
-                      <CardTitle>{decision.title}</CardTitle>
-                      <CardDescription className="mt-2">
-                        {decision.category || "未分类"} · {formatDate(decision.createdAt)}
-                      </CardDescription>
-                    </div>
-                    <span className="w-fit rounded-md border bg-accent px-2.5 py-1 text-sm text-accent-foreground">
-                      {decisionStatusLabels[decision.status]}
-                    </span>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
-                  <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">最终选择</p>
-                      <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">
-                        {decision.finalChoice || "尚未保存最终选择"}
-                      </p>
-                    </div>
-
-                    {decision.review ? (
-                      <div className="rounded-xl border px-4 py-3 text-sm sm:rounded-md">
-                        <p className="text-muted-foreground">后悔分</p>
-                        <p className="mt-1 text-2xl font-semibold">{decision.review.regretScore}</p>
+        <>
+          <div className="grid gap-4">
+            {decisions.map((decision) => (
+              <Link key={decision.id} className="block" href={`/decisions/${decision.id}`}>
+                <Card className="card-in transition hover:border-primary/50 hover:shadow-md">
+                  <CardHeader className="p-5 sm:p-6">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <CardTitle>{decision.title}</CardTitle>
+                        <CardDescription className="mt-2">
+                          {decision.category || "未分类"} · {formatDate(decision.createdAt)}
+                        </CardDescription>
                       </div>
-                    ) : null}
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                      <span className="w-fit rounded-md border bg-accent px-2.5 py-1 text-sm text-accent-foreground">
+                        {decisionStatusLabels[decision.status]}
+                      </span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+                    <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">最终选择</p>
+                        <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">
+                          {decision.finalChoice || "尚未保存最终选择"}
+                        </p>
+                      </div>
+
+                      {decision.review ? (
+                        <div className="rounded-xl border px-4 py-3 text-sm sm:rounded-md">
+                          <p className="text-muted-foreground">后悔分</p>
+                          <p className="mt-1 text-2xl font-semibold">{decision.review.regretScore}</p>
+                        </div>
+                      ) : null}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+
+          <nav
+            className="mt-5 flex flex-col gap-3 rounded-2xl border bg-card p-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+            aria-label="历史决策分页"
+          >
+            <span>
+              第 {currentPage} / {totalPages} 页，显示 {firstItemNumber}-{lastItemNumber}，共 {decisionCount} 条
+            </span>
+            <div className="flex gap-2">
+              <Link
+                aria-disabled={currentPage <= 1}
+                className={
+                  currentPage <= 1
+                    ? "pointer-events-none inline-flex h-10 items-center justify-center rounded-md border px-3 opacity-40"
+                    : "inline-flex h-10 items-center justify-center rounded-md border px-3 transition hover:bg-accent"
+                }
+                href={buildFilterHref(selectedCategory, selectedStatus, currentPage - 1)}
+              >
+                上一页
+              </Link>
+              <Link
+                aria-disabled={currentPage >= totalPages}
+                className={
+                  currentPage >= totalPages
+                    ? "pointer-events-none inline-flex h-10 items-center justify-center rounded-md border px-3 opacity-40"
+                    : "inline-flex h-10 items-center justify-center rounded-md border px-3 transition hover:bg-accent"
+                }
+                href={buildFilterHref(selectedCategory, selectedStatus, currentPage + 1)}
+              >
+                下一页
+              </Link>
+            </div>
+          </nav>
+        </>
       ) : (
         <Card>
           <CardContent className="flex flex-col items-center p-8 text-center">

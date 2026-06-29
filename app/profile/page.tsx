@@ -44,6 +44,17 @@ async function getProfile(identity: Identity) {
     where: profileOwnerWhere(identity),
     orderBy: {
       updatedAt: "desc"
+    },
+    select: {
+      summary: true,
+      commonCategories: true,
+      commonConcerns: true,
+      commonEmotions: true,
+      commonBiases: true,
+      lowRegretStrategies: true,
+      highRegretPatterns: true,
+      lowRegretPatterns: true,
+      updatedAt: true
     }
   });
 }

@@ -28,6 +28,8 @@ type DecisionWhere = {
   userId?: string;
   anonId?: string;
 };
+const defaultListLimit = 50;
+const maxListLimit = 100;
 
 function isString(value: unknown): value is string {
   return typeof value === "string";
@@ -95,11 +97,18 @@ function serializeDecision<T extends { emotions: string | null; aiAnalysis: stri
   };
 }
 
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const status = searchParams.get("status");
+    const page = parsePositiveInt(searchParams.get("page"), 1);
+    const limit = Math.min(parsePositiveInt(searchParams.get("limit"), defaultListLimit), maxListLimit);
     const identity = await resolveIdentityFromRequest(request);
     const where: DecisionWhere = decisionOwnerWhere(identity) as DecisionWhere;
 
@@ -113,6 +122,8 @@ export async function GET(request: Request) {
 
     const decisions = await db.decision.findMany({
       where,
+      skip: (page - 1) * limit,
+      take: limit + 1,
       include: {
         options: true,
         review: {
@@ -129,8 +140,17 @@ export async function GET(request: Request) {
         createdAt: "desc"
       }
     });
+    const hasMore = decisions.length > limit;
+    const pageItems = hasMore ? decisions.slice(0, limit) : decisions;
 
-    return NextResponse.json({ decisions: decisions.map(serializeDecision) });
+    return NextResponse.json({
+      decisions: pageItems.map(serializeDecision),
+      pagination: {
+        hasMore,
+        limit,
+        page
+      }
+    });
   } catch (error) {
     console.error("Failed to list decisions", error);
     return NextResponse.json({ error: "获取决策列表失败，请稍后再试。" }, { status: 500 });

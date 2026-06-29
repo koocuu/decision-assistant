@@ -28,7 +28,13 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
         <div className="hidden flex-col items-center sm:flex">
           <div className="rounded-xl border bg-background p-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Android App 下载二维码" className="h-[132px] w-[132px]" src={qrUrl} />
+            <img
+              alt="Android App 下载二维码"
+              className="h-[132px] w-[132px]"
+              decoding="async"
+              loading="lazy"
+              src={qrUrl}
+            />
           </div>
           <div className="mt-3 flex items-center gap-1 text-sm text-muted-foreground">
             <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
@@ -82,7 +88,13 @@ export async function AppDownloadCard({ variant = "card" }: { variant?: "card" |
 
       <div className="hidden rounded-xl border bg-background p-3 md:block">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img alt="Android App 下载二维码" className="h-[168px] w-[168px]" src={qrUrl} />
+        <img
+          alt="Android App 下载二维码"
+          className="h-[168px] w-[168px]"
+          decoding="async"
+          loading="lazy"
+          src={qrUrl}
+        />
         <div className="mt-2 flex items-center justify-center gap-1 text-xs text-muted-foreground">
           <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
           手机扫码下载
